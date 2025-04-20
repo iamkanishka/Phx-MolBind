@@ -3,8 +3,8 @@ defmodule PhxMolbindWeb.ComponentsLive.MolculeBank do
 
   def render(assigns) do
     ~H"""
-    <div className="flex h-screen items-center justify-center bg-white dark:bg-black">
-      <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+    <div class="flex h-screen items-center justify-center bg-white dark:bg-black">
+      <div class="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
       </div>
     </div>
     """
