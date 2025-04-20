@@ -7,19 +7,19 @@ defmodule PhxMolbindWeb.ModelLive.Model do
     <DefaultLayout>
       <Breadcrumb pageName="Generate Molecules" />
 
-      <div className="grid grid-cols-1 gap-9 sm:grid-cols-3">
-        <div className="flex flex-col gap-9 sm:col-span-2">
-          <div className="rounded-lg border border-stroke bg-white shadow-default dark:border-[#121212] dark:bg-[#181818]">
-            <div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
-              <h3 className="font-medium text-black dark:text-white">
+      <div class="grid grid-cols-1 gap-9 sm:grid-cols-3">
+        <div class="flex flex-col gap-9 sm:col-span-2">
+          <div class="rounded-lg border border-stroke bg-white shadow-default dark:border-[#121212] dark:bg-[#181818]">
+            <div class="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
+              <h3 class="font-medium text-black dark:text-white">
                 SMILES to Molecule Generator
               </h3>
             </div>
             <form onSubmit={handleSubmit}>
-              <div className="p-6.5">
-                <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                  <div className="w-full xl:w-1/2">
-                    <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+              <div class="p-6.5">
+                <div class="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                  <div class="w-full xl:w-1/2">
+                    <label class="mb-3 block text-sm font-medium text-black dark:text-white">
                       SMILES String
                     </label>
                     <input
@@ -27,12 +27,12 @@ defmodule PhxMolbindWeb.ModelLive.Model do
                       value={smiles}
                       onChange={(e) => setSmiles(e.target.value)}
                       placeholder="Enter SMILES string"
-                      className="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
+                      class="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
                     />
                   </div>
 
-                  <div className="w-full xl:w-1/2">
-                    <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                  <div class="w-full xl:w-1/2">
+                    <label class="mb-3 block text-sm font-medium text-black dark:text-white">
                       Number of Molecules
                     </label>
                     <input
@@ -40,13 +40,13 @@ defmodule PhxMolbindWeb.ModelLive.Model do
                       value={numMolecules}
                       onChange={(e) => setNumMolecules(e.target.value)}
                       placeholder="Enter number of molecules"
-                      className="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
+                      class="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
                     />
                   </div>
                 </div>
 
-                <div className="mb-4.5">
-                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                <div class="mb-4.5">
+                  <label class="mb-3 block text-sm font-medium text-black dark:text-white">
                     Minimum Similarity
                   </label>
                   <input
@@ -54,12 +54,12 @@ defmodule PhxMolbindWeb.ModelLive.Model do
                     value={minSimilarity}
                     onChange={(e) => setMinSimilarity(e.target.value)}
                     placeholder="Enter minimum similarity"
-                    className="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
+                    class="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
                   />
                 </div>
 
-                <div className="mb-4.5">
-                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                <div class="mb-4.5">
+                  <label class="mb-3 block text-sm font-medium text-black dark:text-white">
                     Particles
                   </label>
                   <input
@@ -67,12 +67,12 @@ defmodule PhxMolbindWeb.ModelLive.Model do
                     value={particles}
                     onChange={(e) => setParticles(e.target.value)}
                     placeholder="Enter number of particles"
-                    className="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
+                    class="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
                   />
                 </div>
 
-                <div className="mb-4.5">
-                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                <div class="mb-4.5">
+                  <label class="mb-3 block text-sm font-medium text-black dark:text-white">
                     Iterations
                   </label>
                   <input
@@ -80,13 +80,13 @@ defmodule PhxMolbindWeb.ModelLive.Model do
                     value={iterations}
                     onChange={(e) => setIterations(e.target.value)}
                     placeholder="Enter number of iterations"
-                    className="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
+                    class="w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-gray-2 dark:bg-[#181818] dark:text-white dark:focus:border-primary"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="flex w-full justify-center rounded-lg bg-primary p-3 font-medium text-gray hover:bg-opacity-90"
+                  class="flex w-full justify-center rounded-lg bg-primary p-3 font-medium text-gray hover:bg-opacity-90"
                   disabled={loading}
                 >
                   {loading ? "Generating..." : "Generate Molecules"}
@@ -96,28 +96,28 @@ defmodule PhxMolbindWeb.ModelLive.Model do
           </div>
         </div>
 
-        <div className="flex flex-col gap-9">
-          <div className="rounded-lg border border-stroke bg-white p-3 shadow-default dark:border-[#121212] dark:bg-[#181818]">
-            <h3 className="font-medium text-black dark:text-white">
+        <div class="flex flex-col gap-9">
+          <div class="rounded-lg border border-stroke bg-white p-3 shadow-default dark:border-[#121212] dark:bg-[#181818]">
+            <h3 class="font-medium text-black dark:text-white">
               Molecule Generation History
             </h3>
-            <div className="mt-4 max-h-96 overflow-y-auto">
+            <div class="mt-4 max-h-96 overflow-y-auto">
               {history.map((entry: any, index) => (
-                <div key={index} className="border-b border-stroke py-3">
-                  <p className="text-sm text-black dark:text-white">
-                    <span className="font-bold">SMILES:</span> {entry.smiles}
+                <div key={index} class="border-b border-stroke py-3">
+                  <p class="text-sm text-black dark:text-white">
+                    <span class="font-bold">SMILES:</span> {entry.smiles}
                   </p>
-                  <p className="text-sm text-black dark:text-white">
-                    <span className="font-bold">Molecules:</span>{" "}
+                  <p class="text-sm text-black dark:text-white">
+                    <span class="font-bold">Molecules:</span>{" "}
                     {entry.numMolecules}
                   </p>
-                  <p className="text-sm text-black dark:text-white">
-                    <span className="font-bold">Date:</span>{" "}
+                  <p class="text-sm text-black dark:text-white">
+                    <span class="font-bold">Date:</span>{" "}
                     {new Date(entry.createdAt).toLocaleDateString()}
                   </p>
-                  <div className="mt-3">
+                  <div class="mt-3">
                     <button
-                      className="text-primary hover:underline"
+                      class="text-primary hover:underline"
                       onClick={() => setMolecules(entry.generatedMolecules)}
                     >
                       View Molecules
@@ -131,9 +131,9 @@ defmodule PhxMolbindWeb.ModelLive.Model do
       </div>
 
       {molecules.length > 0 && (
-        <div className="mt-8 rounded-lg bg-white p-2">
-          <div className="mt-8 flex flex-col  gap-2">
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        <div class="mt-8 rounded-lg bg-white p-2">
+          <div class="mt-8 flex flex-col  gap-2">
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
               {molecules.map((mol: any, index) => (
                 <MoleculeStructure
                   key={index}
