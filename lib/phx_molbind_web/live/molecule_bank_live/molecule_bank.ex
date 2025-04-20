@@ -6,7 +6,7 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
 
     <DefaultLayout>
       <ComponetHeader pageName="Molecule Bank" containActionButton={true} />
-      <div className="flex flex-col gap-10">
+      <div class="flex flex-col gap-10">
         <MoleculeBankTable />
       </div>
     </DefaultLayout>
