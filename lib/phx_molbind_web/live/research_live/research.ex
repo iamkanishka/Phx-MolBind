@@ -4,7 +4,7 @@ defmodule PhxMolbindWeb.ResearchLive.Research do
    def render(assigns) do
     ~H"""
 
-    <DefaultLayout>
+    <%!-- <DefaultLayout>
       <div class="container mx-auto h-[140dvh] p-0">
         <div class="mb-6 flex flex-col items-center md:flex-row md:justify-between">
           <h2 class="text-title-md2 font-semibold text-black dark:text-white">
@@ -150,7 +150,7 @@ defmodule PhxMolbindWeb.ResearchLive.Research do
           </div>
         )}
       </div>
-    </DefaultLayout>
+    </DefaultLayout> --%>
 
     """
    end
