@@ -4,7 +4,7 @@ defmodule PhxMolbindWeb.ModelLive.Model do
   def render(assigns) do
     ~H"""
 
-    <DefaultLayout>
+    <%!-- <DefaultLayout>
       <Breadcrumb pageName="Generate Molecules" />
 
       <div class="grid grid-cols-1 gap-9 sm:grid-cols-3">
@@ -146,7 +146,7 @@ defmodule PhxMolbindWeb.ModelLive.Model do
           </div>
         </div>
       )}
-    </DefaultLayout>
+    </DefaultLayout> --%>
 
     """
   end
