@@ -3,7 +3,7 @@ defmodule PhxMolbindWeb.MessagesLive.Chat do
 
   def render(assigns) do
     ~H"""
-      <DefaultLayout>
+      <%!-- <DefaultLayout>
       <div class="container mx-auto h-screen p-4">
         <h1 class="mb-6 text-3xl text-black dark:text-white">
           Drug Discovery Chat
@@ -70,7 +70,7 @@ defmodule PhxMolbindWeb.MessagesLive.Chat do
           </div>
         )}
       </div>
-    </DefaultLayout>
+    </DefaultLayout> --%>
     """
   end
 
