@@ -20,7 +20,7 @@ defmodule PhxMolbindWeb.Router do
   scope "/", PhxMolbindWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", DashboardLive.Dashboard , :home
     live "/sign-in", UserLoginLive, :love
 
   end
