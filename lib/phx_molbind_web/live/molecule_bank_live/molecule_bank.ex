@@ -4,12 +4,12 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
   def render(assigns) do
     ~H"""
 
-    <DefaultLayout>
+    <%!-- <DefaultLayout>
       <ComponetHeader pageName="Molecule Bank" containActionButton={true} />
       <div class="flex flex-col gap-10">
         <MoleculeBankTable />
       </div>
-    </DefaultLayout>
+    </DefaultLayout> --%>
 
     """
   end
