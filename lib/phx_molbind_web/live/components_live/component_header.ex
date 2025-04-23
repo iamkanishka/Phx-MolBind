@@ -4,7 +4,7 @@ defmodule PhxMolbindWeb.ComponentsLive.ComponentHeader do
   def render(assigns) do
     ~H"""
 
-    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <%!-- <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <h2 class="text-title-md2 font-semibold text-black dark:text-white">
         {pageName}
       </h2>
@@ -84,7 +84,7 @@ defmodule PhxMolbindWeb.ComponentsLive.ComponentHeader do
         }
         onCloseText="Close"
       />
-    </div>
+    </div> --%>
 
     """
   end
