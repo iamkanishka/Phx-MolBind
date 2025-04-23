@@ -3,7 +3,7 @@ defmodule PhxMolbindWeb.ProfileLive.Profile do
 
   def render(assigns) do
     ~H"""
-       <DefaultLayout>
+       <%!-- <DefaultLayout>
       <div class="mx-auto max-w-242.5">
         <Breadcrumb pageName="Profile" containActionButton={false} />
 
@@ -73,7 +73,7 @@ defmodule PhxMolbindWeb.ProfileLive.Profile do
           </div>
         </div>
       </div>
-    </DefaultLayout>
+    </DefaultLayout> --%>
 
     """
   end
