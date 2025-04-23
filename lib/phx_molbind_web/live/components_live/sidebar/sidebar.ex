@@ -1,13 +1,10 @@
 defmodule PhxMolbindWeb.ComponentsLive.Sidebar.Sidebar do
-
   use PhxMolbindWeb, :live_component
-
 
   @impl true
   def render(assigns) do
     ~H"""
-
-  <aside
+    <%!-- <aside
         class={`fixed left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-[#000000] lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
@@ -45,14 +42,12 @@ defmodule PhxMolbindWeb.ComponentsLive.Sidebar.Sidebar do
                   {group.name}
                 </h3>
 
-             <%!-- SidebarDropown --%>
+
               </div>
             ))}
           </nav>
         </div>
-      </aside>
-
+      </aside> --%>
     """
   end
-
 end
