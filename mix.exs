@@ -61,6 +61,12 @@ defmodule PhxMolbind.MixProject do
       {:bandit, "~> 1.5"},
       {:ueberauth, "~> 0.10"},
       {:ueberauth_google, "~> 0.10"},
+      # {:ex_keccak, "~> 0.7.6"},
+      # {:libsecp256k1, "~> 0.1.10"},
+      # {:keccakf1600, "~> 0.3.1"},
+
+      {:keccakf1600, "~> 2.0"},  # Keccak hashing (pure Elixir)
+      {:ex_secp256k1, "~> 0.7.4"},  # ECDSA recovery (pure Elixir)
 
       {:jose, "~> 1.11"},
       {:joken, "~> 2.6"},
