@@ -2,11 +2,13 @@ defmodule PhxMolbind.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
+alias PhxMolbind.Auth.Auth
 
   use Application
 
   @impl true
   def start(_type, _args) do
+    Auth.start_link([])
     children = [
       PhxMolbindWeb.Telemetry,
       PhxMolbind.Repo,
