@@ -4,7 +4,7 @@ defmodule PhxMolbindWeb.DashboardLive.Dashboard do
   @impl true
   def render(assigns) do
     ~H"""
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4 2xl:gap-7.5">
       <%= for card <- @cta_card_list do %>
         <.live_component
           module={PhxMolbindWeb.ComponentsLive.DashboardLive.CTACard}
@@ -19,7 +19,8 @@ defmodule PhxMolbindWeb.DashboardLive.Dashboard do
   end
 
   @impl true
-  def mount(params, session, socket) do
+  @spec mount(any(), any(), map()) :: {:ok, map()}
+  def  mount(_params, _session, socket) do
     {:ok,
      socket
      |> assign(:page_title, "Dashboard")
