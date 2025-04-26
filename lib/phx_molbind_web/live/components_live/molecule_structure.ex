@@ -2,8 +2,6 @@ defmodule PhxMolbindWeb.ComponentsLive.MoleculeStructure do
 
   use PhxMolbindWeb, :live_component
 
-  alias PhxMolbindWeb.ComponentsLive.MoleculeStructure
-
   def render(assigns) do
     ~H"""
     <div class="molecule-structure">
