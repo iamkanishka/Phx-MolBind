@@ -43,13 +43,15 @@ defmodule PhxMolbindWeb.ComponentsLive.Header do
           </button>
         </div>
 
-        <%!--
+
     <!-- Search Box -->
     <div class="hidden sm:block">
-      <form action="https://formbold.com/s/unique_form_id" method="POST">
+      <form >
+
         <div class="relative">
           <button class="absolute left-0 top-1/2 -translate-y-1/2">
-            <%= live_component @socket, MyAppWeb.Icons.SearchIcon %>
+          <.icon name="hero-magnifying-glass" class="h-5 w-5" />
+
           </button>
           <input
             type="text"
@@ -63,15 +65,15 @@ defmodule PhxMolbindWeb.ComponentsLive.Header do
     <!-- Icons & Dropdowns -->
     <div class="flex items-center gap-3 2xsm:gap-7">
       <ul class="flex items-center gap-2 2xsm:gap-4">
-        <%= live_component @socket, MyAppWeb.Components.DropdownMessage %>
+        <%!-- <%= live_component @socket, MyAppWeb.Components.DropdownMessage %> --%>
       </ul>
 
-      <%= live_component @socket, MyAppWeb.Components.DropdownUser %>
+      <%!-- <%= live_component @socket, MyAppWeb.Components.DropdownUser %> --%>
     </div>
     </div>
 
-    --%>
-      </div>
+
+
     </header>
     """
   end
