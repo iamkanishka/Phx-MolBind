@@ -1,4 +1,5 @@
 defmodule PhxMolbindWeb.Router do
+  alias Auth.MetaMaskLogin
   use PhxMolbindWeb, :router
 
   import PhxMolbindWeb.UserAuth
@@ -14,15 +15,20 @@ defmodule PhxMolbindWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    # plug :accepts, ["json"]
+
+    # Get a random nonce
+    get "/api/nonce", PhxMolbindWeb.Auth.AuthController, :nonce
+    # Verify
+    post "/api/auth/metamask", PhxMolbindWeb.Auth.AuthController, :metamask
   end
 
   scope "/", PhxMolbindWeb do
     pipe_through :browser
 
-    live "/", DashboardLive.Dashboard , :home
+    live "/", DashboardLive.Dashboard, :home
     live "/sign-in", UserLoginLive, :love
-
+    live "/auth/metamask", MetaMaskLogin, :metamask
   end
 
   # Other scopes may use custom stacks.
