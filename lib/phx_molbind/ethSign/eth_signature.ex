@@ -8,8 +8,8 @@ defmodule PhxMolbind.EthSign.EthSignature do
 
   @secp_p 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F
   @secp_n 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
-  @secp_gx 55066263022277343669578718895168534326250603453777594175500187360389116729240
-  @secp_gy 32670510020758816978083085130507043184471273380659243275938904335757337482424
+  @secp_gx 55_066_263_022_277_343_669_578_718_895_168_534_326_250_603_453_777_594_175_500_187_360_389_116_729_240
+  @secp_gy 32_670_510_020_758_816_978_083_085_130_507_043_184_471_273_380_659_243_275_938_904_335_757_337_482_424
   @g {@secp_gx, @secp_gy}
 
   @doc """
@@ -24,6 +24,8 @@ defmodule PhxMolbind.EthSign.EthSignature do
     {:ok, hash}
   end
 
+  @spec recover_address(<<_::520>>, any()) ::
+          {:error, :decompression_failed | :invalid_recovery_id}
   @doc """
   Recovers the Ethereum address from a signature and a hashed message.
 
@@ -33,11 +35,11 @@ defmodule PhxMolbind.EthSign.EthSignature do
     <<r::binary-size(32), s::binary-size(32), v>> = signature
 
     recovery_id =
-      case v do
-        27 -> 0
-        28 -> 1
-        v when v in 0..1 -> v
-        _ -> :invalid
+      cond do
+        v in [27, 28] -> v - 27
+        v in 0..1 -> v
+        v >= 35 -> rem(v - 35, 2)
+        true -> :invalid
       end
 
     if recovery_id == :invalid do
@@ -71,7 +73,8 @@ defmodule PhxMolbind.EthSign.EthSignature do
         pubkey_point = point_mul(r_inv, point_add(sR, neg_eG))
         {:ok, encode_uncompressed(pubkey_point)}
 
-      _ -> {:error, :decompression_failed}
+      _ ->
+        {:error, :decompression_failed}
     end
   end
 
@@ -90,11 +93,11 @@ defmodule PhxMolbind.EthSign.EthSignature do
 
   defp mod_inv(x, m) do
     {g, inv, _} = extended_gcd(x, m)
-    if g != 1, do: (raise "modular inverse does not exist"), else: (rem(inv + m, m))
-
+    if g != 1, do: raise("modular inverse does not exist"), else: rem(inv + m, m)
   end
 
   defp extended_gcd(0, b), do: {b, 0, 1}
+
   defp extended_gcd(a, b) do
     {g, y, x} = extended_gcd(rem(b, a), a)
     {g, x - div(b, a) * y, y}
@@ -108,9 +111,12 @@ defmodule PhxMolbind.EthSign.EthSignature do
   end
 
   defp pow(_a, 0, _p), do: 1
+
   defp pow(a, e, p) do
     cond do
-      rem(e, 2) == 1 -> rem(a * pow(a, e - 1, p), p)
+      rem(e, 2) == 1 ->
+        rem(a * pow(a, e - 1, p), p)
+
       true ->
         half = pow(a, div(e, 2), p)
         rem(half * half, p)
@@ -121,15 +127,21 @@ defmodule PhxMolbind.EthSign.EthSignature do
 
   defp point_add({x1, y1}, {x2, y2}) do
     cond do
-      x1 == :infinity -> {x2, y2}
-      x2 == :infinity -> {x1, y1}
-      x1 == x2 and rem(y1 + y2, @secp_p) == 0 -> :infinity
+      x1 == :infinity ->
+        {x2, y2}
+
+      x2 == :infinity ->
+        {x1, y1}
+
+      x1 == x2 and rem(y1 + y2, @secp_p) == 0 ->
+        :infinity
+
       true ->
         s =
           if x1 == x2 do
-            rem(3 * x1 * x1, @secp_p) * mod_inv(2 * y1, @secp_p) |> rem(@secp_p)
+            (rem(3 * x1 * x1, @secp_p) * mod_inv(2 * y1, @secp_p)) |> rem(@secp_p)
           else
-            rem(y2 - y1, @secp_p) * mod_inv(rem(x2 - x1, @secp_p), @secp_p) |> rem(@secp_p)
+            (rem(y2 - y1, @secp_p) * mod_inv(rem(x2 - x1, @secp_p), @secp_p)) |> rem(@secp_p)
           end
 
         x3 = rem(s * s - x1 - x2, @secp_p)
@@ -141,6 +153,7 @@ defmodule PhxMolbind.EthSign.EthSignature do
   defp point_mul(k, point), do: do_point_mul(k, point, :infinity)
 
   defp do_point_mul(0, _p, acc), do: acc
+
   defp do_point_mul(k, p, acc) do
     acc = if rem(k, 2) == 1, do: point_add(acc, p), else: acc
     do_point_mul(div(k, 2), point_add(p, p), acc)
