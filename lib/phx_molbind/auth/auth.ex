@@ -14,6 +14,10 @@ defmodule PhxMolbind.Auth.Auth do
     nonce
   end
 
+  def delete_nonce(address) do
+    :ets.delete(@nonce_table, String.downcase(address))
+  end
+
   def get_nonce(address) do
     case :ets.lookup(@nonce_table, String.downcase(address)) do
       [{^address, nonce}] -> {:ok, nonce}
@@ -34,7 +38,7 @@ defmodule PhxMolbind.Auth.Auth do
   end
 
   defp decode_signature("0x" <> hex) do
-    Base.decode16(hex, case: :mixed)
+    {:ok, Base.decode16(hex, case: :mixed)}
   end
 
   # Sign a message on Metamask (or elsewhere)
@@ -47,8 +51,8 @@ defmodule PhxMolbind.Auth.Auth do
 
   defp recover_address(signature, hash) do
     case EthSignature.recover_address(signature, hash) do
-      {:ok, address} -> IO.puts("Recovered address: #{address}")
-      {:error, reason} -> IO.puts("Failed: #{inspect(reason)}")
+      {:ok, address} -> {:ok, address}
+      {:error, reason} -> {:error, reason}
     end
   end
 
