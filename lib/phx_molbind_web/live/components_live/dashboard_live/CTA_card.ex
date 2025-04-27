@@ -19,7 +19,7 @@ defmodule PhxMolbindWeb.ComponentsLive.DashboardLive.CTACard do
 
       <div class="mt-2 w-min cursor-pointer rounded-full bg-[#64748b] p-2">
         <span class=" text-sm text-white ">
-          <.icon name="hero-arrow-right" class="h-5 w-5" />
+          <.icon name="hero-arrow-right" />
         </span>
       </div>
     </div>
