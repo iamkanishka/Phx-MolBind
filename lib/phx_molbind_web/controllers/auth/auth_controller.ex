@@ -16,13 +16,22 @@ defmodule PhxMolbindWeb.Auth.AuthController do
     # |> json(%{status: "authenticated", address: signature})
 
     case Auth.verify_signature(address, signature) do
-      {:ok, user_info} ->
-        # You can optionally create a session or a token here
-        # json(conn, %{status: "authenticated", user: user_info})
+      # {:ok, user_info} ->
+      #   # You can optionally create a session or a token here
+      #   # json(conn, %{status: "authenticated", user: user_info})
+      #   conn
+      #   # 👈 Store the Ethereum address
+      #   |> put_session(:eth_address, user_info.address)
+      #   |> json(%{status: "authenticated", address: user_info.address})
+
+      {:ok, %{address: address}} ->
+        Auth.delete_nonce(address) # 👈 Delete the nonce after successful verification
+        # Login the user, set session, etc
         conn
         # 👈 Store the Ethereum address
-        |> put_session(:eth_address, user_info.address)
-        |> json(%{status: "authenticated", address: user_info.address})
+        |> put_session(:eth_address, address)
+
+        json(conn, %{status: "authenticated"})
 
       {:error, reason} ->
         conn
@@ -32,6 +41,18 @@ defmodule PhxMolbindWeb.Auth.AuthController do
         |> json(%{error: reason})
     end
   end
+
+  # case Auth.verify_signature(address, signature) do
+  #   {:ok, %{address: _address}} ->
+  #     :ets.delete(Auth.nonce_table(), String.downcase(address))
+  #     # Login the user, set session, etc
+  #     json(conn, %{status: "authenticated"})
+
+  #   {:error, reason} ->
+  #     conn
+  #     |> put_status(401)
+  #     |> json(%{error: reason})
+  # end
 end
 
 # defmodule MyAppWeb.AuthController do
