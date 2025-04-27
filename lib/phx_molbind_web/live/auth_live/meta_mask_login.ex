@@ -10,7 +10,7 @@ defmodule PhxMolbindWeb.Auth.MetaMaskLogin do
   def render(assigns) do
     ~H"""
     <div class="p-8">
-      <h1 class="text-xl mb-4"> 🐺 MetaMask Login</h1>
+      <h1 class="text-xl mb-4">🐺 MetaMask Login</h1>
 
       <button id="metamask-login" class="bg-indigo-600 text-white px-4 py-2 rounded">
         Connect MetaMask
@@ -38,7 +38,7 @@ defmodule PhxMolbindWeb.Auth.MetaMaskLogin do
 
             const signature = await provider.request({
               method: 'personal_sign',
-              params: [nonce, address],
+              params:  [address, nonce],
             });
 
             const authRes = await fetch(`/api/auth/metamask`, {
