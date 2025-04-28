@@ -15,6 +15,7 @@ defmodule PhxMolbindWeb.CoreComponents do
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
   use Phoenix.Component
+  import Phoenix.HTML
   use Gettext, backend: PhxMolbindWeb.Gettext
 
   alias Phoenix.LiveView.JS
@@ -672,5 +673,47 @@ defmodule PhxMolbindWeb.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+
+
+  @doc """
+  Renders an SVG icon.
+
+  ## Usage
+
+      <.cust_icon name="x-mark-solid" />
+      <.cust_icon name="arrow-path" class="ml-1 w-3 h-3 animate-spin" />
+
+  """
+  attr :name, :string, required: true
+  attr :class, :string, default: ""
+
+  def cust_icon(assigns) do
+    IO.inspect(assigns.name, label: "cust_icon assigns")
+    svg_content = Map.get(@svgs, assigns.name)
+    IO.inspect(svg_content, label: "cust_icon assigns")
+
+    assigns =
+      if svg_content do
+        updated_svg =
+          if assigns.class != "" do
+            String.replace(svg_content, "<svg", "<svg class=\"#{assigns.class}\"", global: false)
+          else
+            svg_content
+          end
+
+        assign(assigns, :svg_content, updated_svg)
+      else
+        assign(assigns, :svg_content, nil)
+      end
+
+    ~H"""
+    <%= if @svg_content do %>
+    <%= raw(@svg_content) %>
+    <% else %>
+      <span class="text-red-500">Icon not found: {@name}</span>
+    <% end %>
+    """
   end
 end
