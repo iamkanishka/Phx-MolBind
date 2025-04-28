@@ -3,6 +3,70 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
 
 
 
+  @molecule_bank [
+    %{
+      molecule_name: "Aspirin",
+      smiles_structure: "CC(=O)OC1=CC=CC=C1C(O)=O",
+      molecular_weight: 180.16,
+      category_usage: "Pain reliever/NSAID"
+    },
+    %{
+      molecule_name: "Caffeine",
+      smiles_structure: "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+      molecular_weight: 194.19,
+      category_usage: "Stimulant"
+    },
+    %{
+      molecule_name: "Benzene",
+      smiles_structure: "C1=CC=CC=C1",
+      molecular_weight: 78.11,
+      category_usage: "Industrial solvent"
+    },
+    %{
+      molecule_name: "Glucose",
+      smiles_structure: "C(C1C(C(C(C(O1)O)O)O)O)O",
+      molecular_weight: 180.16,
+      category_usage: "Energy source/sugar"
+    },
+    %{
+      molecule_name: "Penicillin",
+      smiles_structure: "CC1(C2C(C(C(O2)N1C(=O)COC(=O)C)C)S)C=O",
+      molecular_weight: 334.39,
+      category_usage: "Antibiotic"
+    },
+    %{
+      molecule_name: "Ibuprofen",
+      smiles_structure: "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+      molecular_weight: 206.28,
+      category_usage: "Pain reliever/NSAID"
+    },
+    %{
+      molecule_name: "Acetaminophen",
+      smiles_structure: "CC(=O)NC1=CC=C(O)C=C1",
+      molecular_weight: 151.16,
+      category_usage: "Pain reliever/Antipyretic"
+    },
+    %{
+      molecule_name: "Morphine",
+      smiles_structure: "CN1CCC23C4C1CC(C2C3O)OC5=CC=CC=C45",
+      molecular_weight: 285.34,
+      category_usage: "Pain reliever/Opiate"
+    },
+    %{
+      molecule_name: "Nicotine",
+      smiles_structure: "CN1CCCC1C2=CN=CC=C2",
+      molecular_weight: 162.23,
+      category_usage: "Stimulant"
+    },
+    %{
+      molecule_name: "Ethanol",
+      smiles_structure: "CCO",
+      molecular_weight: 46.07,
+      category_usage: "Alcohol/Disinfectant"
+    }
+  ]
+
+
 
 
   def render(assigns) do
