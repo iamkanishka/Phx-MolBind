@@ -35,12 +35,12 @@ defmodule PhxMolbindWeb.DashboardLive.Dashboard do
       %{
         title: "Search Compounds",
         subtitle: "get access to more molecules",
-        icon: "magnifying-glass"
+        icon: "search"
       },
       %{
         title: "Collaborative Research",
         subtitle: "get access to more molecules",
-        icon: "chat-bubble-oval-left"
+        icon: "message-circle"
       }
     ])
   end
