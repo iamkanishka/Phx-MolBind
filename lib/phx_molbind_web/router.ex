@@ -27,8 +27,13 @@ defmodule PhxMolbindWeb.Router do
     pipe_through :browser
 
     live "/", DashboardLive.Dashboard, :home
+    live "/molecule-bank", MoleculeBankLive.MoleculeBank , :home
+
+
+
     live "/sign-in", UserLoginLive, :love
     live "/auth/metamask", MetaMaskLogin, :metamask
+
   end
 
   # Other scopes may use custom stacks.
