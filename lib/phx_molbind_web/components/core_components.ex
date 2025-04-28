@@ -675,7 +675,21 @@ defmodule PhxMolbindWeb.CoreComponents do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
 
+  @svg_dir Path.join(:code.priv_dir(:phx_molbind), "static/svgs")
 
+  @svgs (if File.dir?(@svg_dir) do
+           @svg_dir
+           |> File.ls!()
+           |> Enum.filter(&String.ends_with?(&1, ".svg"))
+           |> Enum.map(fn filename ->
+             name = filename |> String.replace_suffix(".svg", "")
+             path = Path.join(@svg_dir, filename)
+             {name, File.read!(path)}
+           end)
+           |> Enum.into(%{})
+         else
+           %{}
+         end)
 
   @doc """
   Renders an SVG icon.
