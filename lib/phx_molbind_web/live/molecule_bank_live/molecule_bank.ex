@@ -2,7 +2,6 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
   use PhxMolbindWeb, :live_view
 
 
-
   @molecule_bank [
     %{
       molecule_name: "Aspirin",
@@ -65,8 +64,6 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
       category_usage: "Alcohol/Disinfectant"
     }
   ]
-
-
 
 
   def render(assigns) do
@@ -138,7 +135,27 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
     """
   end
 
-  def  mount(_params, _session, socket) do
-    {:ok, socket}
+
+  @impl true
+  def mount(_params, _session, socket) do
+    {:ok,
+      socket
+      |> assign(:search_query, "")
+      |> assign(:all_molecules, @molecule_bank)
+      |> assign(:filtered_molecules, @molecule_bank)}
+  end
+
+  @impl true
+  def handle_event("search_molecule", %{"search_query" => query}, socket) do
+    filtered =
+      socket.assigns.all_molecules
+      |> Enum.filter(fn molecule ->
+        String.contains?(String.downcase(molecule.molecule_name || ""), String.downcase(query || ""))
+      end)
+
+    {:noreply,
+      socket
+      |> assign(:search_query, query)
+      |> assign(:filtered_molecules, filtered)}
   end
 end
