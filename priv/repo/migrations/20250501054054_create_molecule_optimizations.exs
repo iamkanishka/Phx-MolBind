@@ -1,4 +1,4 @@
-defmodule PhxMolbind.Repo.Migrations.CreateMoleculeOptimizations do
+defmodule PhxMolbind.Repo.Migrations.CreateMolecule do
   use Ecto.Migration
 
   def change do
