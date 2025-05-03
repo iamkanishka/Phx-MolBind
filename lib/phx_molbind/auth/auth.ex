@@ -9,7 +9,8 @@ defmodule PhxMolbind.Auth.Auth do
   end
 
   def generate_and_store_nonce(address) do
-    nonce = :crypto.strong_rand_bytes(16) |> Base.encode64()
+    IO.inspect(address, label: "generate_and_store_nonce")
+    nonce = :crypto.strong_rand_bytes(16) |> Base.encode16(case: :lower)
     :ets.insert(@nonce_table, {String.downcase(address), nonce})
     nonce
   end
