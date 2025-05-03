@@ -1,67 +1,40 @@
-# lib/my_app_web/live/meta_mask_login_live.ex
-
 defmodule PhxMolbindWeb.Auth.MetaMaskLogin do
   use PhxMolbindWeb, :live_view
+  alias PhxMolbindWeb.AuthLive.Ethauth
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, status: nil)}
-  end
+  @impl true
 
   def render(assigns) do
     ~H"""
-    <div class="p-8">
-      <h1 class="text-xl mb-4">🐺 MetaMask Login</h1>
-
-      <button id="metamask-login" class="bg-indigo-600 text-white px-4 py-2 rounded">
-        Connect MetaMask
-      </button>
-
-      <p class="mt-4">{@status}</p>
+    <div id="metamask-login" phx-hook="MetaMaskLogin">
+      <button class="btn">Login with MetaMask</button>
     </div>
-
-    <script>
-      window.addEventListener("phx:page-loading-stop", async () => {
-        const btn = document.getElementById("metamask-login");
-        if (!btn) return;
-
-        btn.onclick = async () => {
-          const provider = window.ethereum;
-          if (!provider) {
-            alert("MetaMask not found");
-            return;
-          }
-
-          try {
-            const [address] = await provider.request({ method: 'eth_requestAccounts' });
-            const nonceRes = await fetch(`/api/nonce?address=${address}`);
-            const { nonce } = await nonceRes.json();
-
-            const signature = await provider.request({
-              method: 'personal_sign',
-              params:  [address, nonce],
-            });
-
-            const authRes = await fetch(`/api/auth/metamask`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ address, signature }),
-              credentials: 'include' // ⬅️ Important for session-based login
-            });
-
-            const result = await authRes.json();
-
-            if (result.status === "authenticated") {
-              window.location.reload(); // or redirect to dashboard
-            } else {
-              alert("Auth failed");
-            }
-          } catch (err) {
-            console.error(err);
-            alert("Something went wrong");
-          }
-        };
-      });
-    </script>
     """
+  end
+
+  @impl true
+
+  def mount(_params, _session, socket) do
+    {:ok, assign(socket, eth_address: nil)}
+  end
+
+  def handle_event(
+        "metamask_login",
+        %{"message" => msg, "signature" => sig, "address" => address},
+        socket
+      ) do
+        IO.inspect(msg, label: "Received message")
+        IO.inspect(sig, label: "Received signature")
+        IO.inspect(address, label: "Received address")
+    # Log the received parameters for debugging
+    # Verify the signature using the Ethauth module
+    if Ethauth.verify_signature(msg, sig, address) do
+      {:noreply,
+       socket
+       |> put_flash(:info, "Logged in as #{address}")
+       |> assign(:eth_address, address)}
+    else
+      {:noreply, put_flash(socket, :error, "Signature verification failed")}
+    end
   end
 end
