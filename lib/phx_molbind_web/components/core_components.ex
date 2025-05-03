@@ -704,9 +704,7 @@ defmodule PhxMolbindWeb.CoreComponents do
   attr :class, :string, default: ""
 
   def cust_icon(assigns) do
-    IO.inspect(assigns.name, label: "cust_icon assigns")
     svg_content = Map.get(@svgs, assigns.name)
-    IO.inspect(svg_content, label: "cust_icon assigns")
 
     assigns =
       if svg_content do
@@ -724,7 +722,7 @@ defmodule PhxMolbindWeb.CoreComponents do
 
     ~H"""
     <%= if @svg_content do %>
-    <%= raw(@svg_content) %>
+      {raw(@svg_content)}
     <% else %>
       <span class="text-red-500">Icon not found: {@name}</span>
     <% end %>
