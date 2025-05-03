@@ -1,6 +1,4 @@
-let Hooks = {}
-
-Hooks.ChemDoodleViewer = {
+export default {
   mounted() {
     this.canvas = new ChemDoodle.StructureCanvas(this.el.id, 500, 300);
 
@@ -17,6 +15,6 @@ Hooks.ChemDoodleViewer = {
       `;
     });
   }
-};
+}
 
-export default Hooks;
+ 
