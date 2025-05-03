@@ -2,6 +2,8 @@ defmodule PhxMolbindWeb.Router do
   alias Auth.MetaMaskLogin
   use PhxMolbindWeb, :router
 
+  alias PhxMolbindWeb.Auth.EthAuthController
+
   import PhxMolbindWeb.UserAuth
 
   pipeline :browser do
@@ -20,20 +22,22 @@ defmodule PhxMolbindWeb.Router do
     # Get a random nonce
     get "/api/nonce", PhxMolbindWeb.Auth.AuthController, :nonce
     # Verify
-    post "/api/auth/metamask", PhxMolbindWeb.Auth.AuthController, :metamask
+    post "/api/auth/metamask", EthAuthController, :metamask
+
+    # post "/api/auth/nonce", EthAuthController, :get_nonce
+    # post "/api/auth/login", EthAuthController, :login
+    # post "/api/auth/logout", EthAuthController, :logout
   end
 
   scope "/", PhxMolbindWeb do
     pipe_through :browser
 
     live "/", DashboardLive.Dashboard, :home
-    live "/molecule-bank", MoleculeBankLive.MoleculeBank , :home
-    live "/model", ModelLive.Model , :home
-
+    live "/molecule-bank", MoleculeBankLive.MoleculeBank, :home
+    live "/model", ModelLive.Model, :home
 
     live "/sign-in", UserLoginLive, :love
     live "/auth/metamask", MetaMaskLogin, :metamask
-
   end
 
   # Other scopes may use custom stacks.
