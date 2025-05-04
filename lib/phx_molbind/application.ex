@@ -2,7 +2,7 @@ defmodule PhxMolbind.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
-alias PhxMolbind.Auth.Auth
+alias PhxMolbind.EthAuth.Auth
 
   use Application
 
