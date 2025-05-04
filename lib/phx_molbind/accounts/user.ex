@@ -5,9 +5,7 @@ defmodule PhxMolbind.Accounts.User do
 
   schema "users" do
     field :address, :string
-    field :nonce, :string
-    field :username, :string
-    field :metadata, :map, default: %{}
+
     field :last_login_at, :utc_datetime_usec
 
     timestamps(type: :utc_datetime)
@@ -16,8 +14,8 @@ defmodule PhxMolbind.Accounts.User do
 
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:address, :nonce, :username, :metadata, :last_login_at])
-    |> validate_required([:address, :nonce])
+    |> cast(attrs, [:address,:last_login_at])
+    |> validate_required([:address, :last_login_at])
     |> unique_constraint(:address)
   end
 end
