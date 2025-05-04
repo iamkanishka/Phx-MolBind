@@ -1,6 +1,7 @@
 defmodule PhxMolbindWeb.Auth.MetaMaskLogin do
   use PhxMolbindWeb, :live_view
-  alias PhxMolbindWeb.AuthLive.Ethauth
+
+  alias PhxMolbind.Accounts.Accounts
 
   @impl true
 
@@ -8,6 +9,11 @@ defmodule PhxMolbindWeb.Auth.MetaMaskLogin do
     ~H"""
     <div id="metamask-login" phx-hook="MetaMaskLogin">
       <button class="btn">Login with MetaMask</button>
+      <%= if @eth_address do %>
+        <p>Logged in as: {@eth_address}</p>
+      <% else %>
+        <p>Please log in to access your account.</p>
+      <% end %>
     </div>
     """
   end
@@ -18,23 +24,22 @@ defmodule PhxMolbindWeb.Auth.MetaMaskLogin do
     {:ok, assign(socket, eth_address: nil)}
   end
 
+  @impl true
   def handle_event(
         "metamask_login",
-        %{"message" => msg, "signature" => sig, "address" => address},
+        %{"address" => address},
         socket
       ) do
-        IO.inspect(msg, label: "Received message")
-        IO.inspect(sig, label: "Received signature")
-        IO.inspect(address, label: "Received address")
-    # Log the received parameters for debugging
-    # Verify the signature using the Ethauth module
-    if Ethauth.verify_signature(msg, sig, address) do
-      {:noreply,
-       socket
-       |> put_flash(:info, "Logged in as #{address}")
-       |> assign(:eth_address, address)}
-    else
-      {:noreply, put_flash(socket, :error, "Signature verification failed")}
-    end
+    IO.inspect(address, label: "Received address")
+
+    {:ok, user} =
+      case Accounts.get_user_by_address(address) do
+        nil -> Accounts.create_user(%{address: address, last_login_at: DateTime.utc_now()})
+        user -> Accounts.update_user(user, %{last_login_at: DateTime.utc_now()})
+      end
+
+      IO.inspect(user, label: "User after login")
+
+    {:noreply, socket |> assign(:eth_address, address)}
   end
 end
