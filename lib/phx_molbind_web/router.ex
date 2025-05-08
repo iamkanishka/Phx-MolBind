@@ -1,4 +1,5 @@
 defmodule PhxMolbindWeb.Router do
+
   alias Auth.MetaMaskLogin
   use PhxMolbindWeb, :router
 
@@ -35,6 +36,8 @@ defmodule PhxMolbindWeb.Router do
     live "/", DashboardLive.Dashboard, :home
     live "/molecule-bank", MoleculeBankLive.MoleculeBank, :home
     live "/model", ModelLive.Model, :home
+    live "/research", ResearchLive.Research, :home
+
 
     live "/sign-in", UserLoginLive, :love
     live "/auth/metamask", MetaMaskLogin, :metamask
