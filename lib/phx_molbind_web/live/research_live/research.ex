@@ -4,6 +4,13 @@ defmodule PhxMolbindWeb.ResearchLive.Research do
   def render(assigns) do
     ~H"""
     <div class="container mx-auto h-[140dvh] p-0">
+      <button phx-click="toggle-theme">Toggle Theme</button>
+      <div class="p-6 rounded shadow bg-white text-black dark:bg-gray-900 dark:text-white"  id="body-theme-provider" phx-hook="Theme">
+        <h1 class="text-xl font-bold">Theme Test</h1>
+
+        <p>This box will change based on the theme.</p>
+      </div>
+
       <div class="mb-6 flex flex-col items-center md:flex-row md:justify-between">
         <h2 class="text-title-md2 font-semibold text-black dark:text-white">
           Compound Search
@@ -21,7 +28,7 @@ defmodule PhxMolbindWeb.ResearchLive.Research do
             placeholder="Enter a compound name"
           />
           <span class="absolute inset-y-0 right-3 flex items-center">
-            <.icon name="search" class="text-gray-500" />
+            <.icon name="hero-search" class="text-gray-500" />
           </span>
         </div>
       </div>
@@ -102,7 +109,8 @@ defmodule PhxMolbindWeb.ResearchLive.Research do
             <p>
               <strong class="text-gray-600 dark:text-gray-300">
                 Topological Polar Surface Area (TPSA):
-              </strong> {@compound_data["TPSA"]} Å²
+              </strong>
+               {@compound_data["TPSA"]} Å²
             </p>
 
             <p>
@@ -156,8 +164,6 @@ defmodule PhxMolbindWeb.ResearchLive.Research do
     """
   end
 
-
-
   def mount(_params, _session, socket) do
     {:ok,
      socket
@@ -179,8 +185,6 @@ defmodule PhxMolbindWeb.ResearchLive.Research do
     {:noreply, socket}
   end
 
-
-
   defp search(socket) do
     compound_name = socket.assigns.compound_name
 
@@ -199,4 +203,22 @@ defmodule PhxMolbindWeb.ResearchLive.Research do
     end
   end
 
+  @impl true
+  def handle_event("toggle-theme", _params, socket) do
+    IO.inspect(socket.assigns[:theme])
+
+    new_theme =
+      case socket.assigns[:theme] do
+        "light" -> "dark"
+        "dark" -> "system"
+        _ -> "light"
+      end
+
+    IO.inspect(new_theme)
+
+    {:noreply,
+     socket
+     |> assign(:theme, new_theme)
+     |> push_event("theme:set", %{theme: new_theme})}
+  end
 end
