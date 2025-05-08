@@ -8,6 +8,7 @@ const fs = require("fs")
 const path = require("path")
 
 module.exports = {
+  darkMode: 'class', 
   content: [
     "./js/**/*.js",
     "../lib/phx_molbind_web.ex",
