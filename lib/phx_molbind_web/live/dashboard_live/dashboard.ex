@@ -44,4 +44,12 @@ defmodule PhxMolbindWeb.DashboardLive.Dashboard do
       }
     ])
   end
+
+
+  def handle_event("theme:init", %{"theme" => theme}, socket) do
+    # You can update assign or store the theme as needed.
+    IO.inspect(theme, label: "theme check ")
+    {:noreply, assign(socket, :theme, theme)}
+  end
+
 end
