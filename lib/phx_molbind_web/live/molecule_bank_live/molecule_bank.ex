@@ -1,7 +1,6 @@
 defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
   use PhxMolbindWeb, :live_view
 
-
   @molecule_bank [
     %{
       molecule_name: "Aspirin",
@@ -23,7 +22,7 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
     },
     %{
       molecule_name: "Glucose",
-      smiles_structure: "C(C1C(C(C(C(O1)O)O)O)O)O",
+      smiles_structure: "C(CC(=O)O)C(=O)O",
       molecular_weight: 180.16,
       category_usage: "Energy source/sugar"
     },
@@ -65,7 +64,7 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
     }
   ]
 
-
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="rounded-lg border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-[#181818] dark:bg-[#181818] sm:px-7.5 xl:pb-1">
@@ -113,7 +112,24 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
 
             <div class="flex items-center gap-3 p-2.5 xl:p-5">
               <div class="flex-shrink-0">
-                <%!-- <.molecule_structure id={index} structure={molecule.smiles_structure} /> --%>
+                <%!-- <.molecule_structure id={index} structure={molecule.smiles_structure} />
+                <canvas
+                  id={"molecule-canvas-#{index}"}
+                  data-smiles={molecule.smiles_structure}
+                  phx-hook="renderSMILESmol"
+                  width="500"
+                  height="300"
+                >
+                    </canvas>
+                --%>
+                <canvas
+                  id={"smiles-canvas-#{index}"}
+                  phx-hook="renderSMILESmol"
+                  data-smiles={molecule.smiles_structure}
+                  width="300"
+                  height="300"
+                >
+                </canvas>
               </div>
             </div>
 
@@ -135,14 +151,13 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
     """
   end
 
-
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
-      socket
-      |> assign(:search_query, "")
-      |> assign(:all_molecules, @molecule_bank)
-      |> assign(:filtered_molecules, @molecule_bank)}
+     socket
+     |> assign(:search_query, "")
+     |> assign(:all_molecules, @molecule_bank)
+     |> assign(:filtered_molecules, @molecule_bank)}
   end
 
   @impl true
@@ -150,12 +165,20 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
     filtered =
       socket.assigns.all_molecules
       |> Enum.filter(fn molecule ->
-        String.contains?(String.downcase(molecule.molecule_name || ""), String.downcase(query || ""))
+        String.contains?(
+          String.downcase(molecule.molecule_name || ""),
+          String.downcase(query || "")
+        )
       end)
 
     {:noreply,
-      socket
-      |> assign(:search_query, query)
-      |> assign(:filtered_molecules, filtered)}
+     socket
+     |> assign(:search_query, query)
+     |> assign(:filtered_molecules, filtered)}
+  end
+
+  def handle_event("theme:init", %{"theme" => theme}, socket) do
+    # You can update assign or store the theme as needed.
+    {:noreply, assign(socket, :theme, theme)}
   end
 end
