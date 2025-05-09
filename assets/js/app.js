@@ -26,12 +26,12 @@ let Hooks = {};
 import MetaMaskLogin from "./MetaMaskLogin";
 import ThemeProvider from "./ThemeProvider";
 import renderSMILESmol from "./renderSMILESmol";
-
+import ThreeDrenderSmilemol from "./ThreeDrenderSmilemol";
 
 Hooks.MetaMaskLogin = MetaMaskLogin;
 Hooks.ThemeProvider = ThemeProvider;
 Hooks.renderSMILESmol = renderSMILESmol;
-
+Hooks.ThreeDrenderSmilemol = ThreeDrenderSmilemol;
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
