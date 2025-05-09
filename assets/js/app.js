@@ -25,9 +25,13 @@ import topbar from "../vendor/topbar";
 let Hooks = {};
 import MetaMaskLogin from "./MetaMaskLogin";
 import ThemeProvider from "./ThemeProvider";
+import renderSMILESmol from "./renderSMILESmol";
+
 
 Hooks.MetaMaskLogin = MetaMaskLogin;
 Hooks.ThemeProvider = ThemeProvider;
+Hooks.renderSMILESmol = renderSMILESmol;
+
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
