@@ -37,6 +37,8 @@ defmodule PhxMolbindWeb.Router do
     live "/molecule-bank", MoleculeBankLive.MoleculeBank, :home
     live "/model", ModelLive.Model, :home
     live "/research", ResearchLive.Research, :home
+    live "/sketcher", MolsketcherLive.Molsketcher, :home
+
 
 
     live "/sign-in", UserLoginLive, :love
