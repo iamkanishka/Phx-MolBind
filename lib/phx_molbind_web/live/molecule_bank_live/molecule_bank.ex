@@ -111,7 +111,7 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
             </div>
 
             <div class="flex items-center gap-3 p-2.5 xl:p-5">
-              <div class="flex-shrink-0">
+              <div class="flex-shrink-0 cursor-pointer">
                 <%!-- <.molecule_structure id={index} structure={molecule.smiles_structure} />
                 <canvas
                   id={"molecule-canvas-#{index}"}
@@ -126,8 +126,8 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
                   id={"smiles-canvas-#{index}"}
                   phx-hook="renderSMILESmol"
                   data-smiles={molecule.smiles_structure}
-                  width="300"
-                  height="300"
+                  width="200"
+                  height="200"
                 >
                 </canvas>
               </div>
@@ -148,6 +148,17 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
         <% end %>
       </div>
     </div>
+
+    <.modal  id="product-modal" show on_cancel={JS.patch(~p"/")}>
+      <%!-- <.live_component
+    module={AmazinWeb.ProductLive.FormComponent}
+    id={:new}
+    title={@page_title}
+    action={@live_action}
+    product={@product}
+    patch={~p"/products"}
+    /> --%>
+    </.modal>
     """
   end
 
