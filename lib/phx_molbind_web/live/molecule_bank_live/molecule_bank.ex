@@ -148,9 +148,9 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
         <% end %>
       </div>
     </div>
-
-    <.modal  id="product-modal" show on_cancel={JS.patch(~p"/")}>
-      <%!-- <.live_component
+     <%!--
+    <.modal  id="product-modal" show on_cancel={JS.patch(~p"/molecule-bank")}>
+  <.live_component
     module={AmazinWeb.ProductLive.FormComponent}
     id={:new}
     title={@page_title}
@@ -158,7 +158,7 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
     product={@product}
     patch={~p"/products"}
     /> --%>
-    </.modal>
+    <%!-- </.modal> --%>
     """
   end
 
