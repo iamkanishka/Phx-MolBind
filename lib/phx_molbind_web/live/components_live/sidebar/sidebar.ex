@@ -67,7 +67,9 @@ defmodule PhxMolbindWeb.ComponentsLive.Sidebar.Sidebar do
            %{icon: "atom", label: "Molecules Bank", route: "/molecule-bank"},
            %{icon: "network", label: "Model", route: "/model"},
            %{icon: "microscope", label: "Research", route: "/research"},
-           %{icon: "message-square-text", label: "Messages", route: "/message"}
+           %{icon: "message-square-text", label: "Messages", route: "/message"},
+           %{icon: "message-square-text", label: "Sketcher", route: "/sketcher"}
+
          ]
        },
        %{
