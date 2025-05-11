@@ -298,4 +298,9 @@ defmodule PhxMolbindWeb.ModelLive.Model do
     form = Phoenix.HTML.FormData.to_form(%{}, as: :form)
     assign(socket, %{form: form})
   end
+
+    def handle_event("theme:init", %{"theme" => theme}, socket) do
+    # You can update assign or store the theme as needed.
+    {:noreply, assign(socket, :theme, theme)}
+  end
 end
