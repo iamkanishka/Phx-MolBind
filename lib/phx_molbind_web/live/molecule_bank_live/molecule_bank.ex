@@ -110,7 +110,11 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
               </p>
             </div>
 
-            <div class="flex items-center gap-3 p-2.5 xl:p-5">
+            <div
+              class="flex items-center gap-3 p-2.5 xl:p-5"
+              phx-click="enlarge_molecule"
+              phx-value-smiles={"#{molecule.smiles_structure}"}
+            >
               <div class="flex-shrink-0 cursor-pointer">
                 <%!-- <.molecule_structure id={index} structure={molecule.smiles_structure} />
                 <canvas
@@ -128,6 +132,8 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
                   data-smiles={molecule.smiles_structure}
                   width="200"
                   height="200"
+                  data-width="200"
+                  data-height="200"
                 >
                 </canvas>
               </div>
@@ -148,17 +154,16 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
         <% end %>
       </div>
     </div>
-     <%!--
-    <.modal  id="product-modal" show on_cancel={JS.patch(~p"/molecule-bank")}>
-  <.live_component
-    module={AmazinWeb.ProductLive.FormComponent}
-    id={:new}
-    title={@page_title}
-    action={@live_action}
-    product={@product}
-    patch={~p"/products"}
-    /> --%>
-    <%!-- </.modal> --%>
+
+    <%= if @expand_molecule and  @selecetd_smiles !=nil do %>
+      <.modal id="molecule-modal" show on_cancel={JS.patch(~p"/molecule-bank")}>
+        <.live_component
+          module={PhxMolbindWeb.ComponentsLive.MoleculeRender.MoleculeRender}
+          id="selected_smiles-canvas"
+          smiles_structure={@selecetd_smiles}
+        />
+      </.modal>
+    <% end %>
     """
   end
 
@@ -167,6 +172,8 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
     {:ok,
      socket
      |> assign(:search_query, "")
+     |> assign(:expand_molecule, false)
+     |> assign(:selecetd_smiles, nil)
      |> assign(:all_molecules, @molecule_bank)
      |> assign(:filtered_molecules, @molecule_bank)}
   end
@@ -188,6 +195,16 @@ defmodule PhxMolbindWeb.MoleculeBankLive.MoleculeBank do
      |> assign(:filtered_molecules, filtered)}
   end
 
+  @impl true
+  def handle_event("enlarge_molecule", %{"smiles" => smiles}, socket) do
+    # You can update assign or store the theme as needed.
+    {:noreply,
+     socket
+     |> assign(:expand_molecule, true)
+     |> assign(:selecetd_smiles, smiles)}
+  end
+
+  @impl true
   def handle_event("theme:init", %{"theme" => theme}, socket) do
     # You can update assign or store the theme as needed.
     {:noreply, assign(socket, :theme, theme)}
