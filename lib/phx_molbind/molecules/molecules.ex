@@ -1,65 +1,55 @@
 defmodule PhxMolbind.Molecules.Molecules do
-  @moduledoc """
-  The Molecules context.
-  """
-  use Ecto.Schema
+  alias PhxMolbind.Repo
 
-  import Ecto.Changeset
+  alias PhxMolbind.Accounts.Accounts
 
-  schema "molecule_optimizations" do
-    field :algorithm, :string
-    field :num_molecules, :integer
-    field :property_name, :string
-    field :minimize, :boolean, default: false
-    field :min_similarity, :float
-    field :particles, :integer
-    field :iterations, :integer
-    field :smi, :string
-    field :generated_molecules, :map, default: %{}
+  alias PhxMolbind.Molecules.Molecule
+  import Ecto.Query, only: [from: 2]
 
-    belongs_to :user, YourApp.Accounts.User
-
-    timestamps()
+  def get_user_by_email(address) do
+    Accounts.get_user_by_address(address)
   end
 
-  @spec changeset(
-          {map(),
-           %{
-             optional(atom()) =>
-               atom()
-               | {:array | :assoc | :embed | :in | :map | :parameterized | :supertype | :try,
-                  any()}
-           }}
-          | %{
-              :__struct__ => atom() | %{:__changeset__ => any(), optional(any()) => any()},
-              optional(atom()) => any()
-            },
-          :invalid | %{optional(:__struct__) => none(), optional(atom() | binary()) => any()}
-        ) :: Ecto.Changeset.t()
-  def changeset(optimization, attrs) do
-    optimization
-    |> cast(attrs, [
-      :algorithm,
-      :num_molecules,
-      :property_name,
-      :minimize,
-      :min_similarity,
-      :particles,
-      :iterations,
-      :smi,
-      :generated_molecules,
-      :user_id
-    ])
-    |> validate_required([
-      :algorithm,
-      :num_molecules,
-      :property_name,
-      :minimize,
-      :min_similarity,
-      :particles,
-      :iterations,
-      :smi,
-      :user_id
-    ])
+  def get_history_for_user(user_id) do
+    Repo.all(
+      from mo in Molecule,
+        join: u in assoc(mo, :user),
+        where: u.user_id == ^user_id,
+        preload: [:user]
+    )
+  end
+
+  def create_history(attrs, user_id) do
+    %Molecule{}
+    |> Molecule.changeset(Map.put(attrs, :user_id, user_id))
+    |> Repo.insert()
+  end
+
+  def generate_molecules(payload) do
+    url = "https://health.api.nvidia.com/v1/biology/nvidia/molmim/generate"
+
+    headers = [
+      {"Authorization",
+       "Bearer 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"},
+      {"Accept", "application/json"},
+      {"Content-Type", "application/json"}
+    ]
+
+    case Finch.build(:post, url, headers, Jason.encode!(payload))
+         |> Finch.request(PhxMolbind.Finch) do
+      {:ok, %Finch.Response{status: 200, body: body}} ->
+        with {:ok, %{"molecules" => molecules_str}} <- Jason.decode(body),
+             {:ok, molecules_list} <- Jason.decode(molecules_str) do
+          {:ok,
+           Enum.map(molecules_list, fn %{"sample" => smi, "score" => score} ->
+             %{structure: smi, score: score}
+           end)}
+        else
+          error -> {:error, error}
+        end
+
+      {:error, reason} ->
+        {:error, reason}
+    end
   end
 end
