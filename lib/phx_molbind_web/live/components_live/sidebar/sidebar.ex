@@ -64,9 +64,13 @@ defmodule PhxMolbindWeb.ComponentsLive.Sidebar.Sidebar do
          name: "",
          menu_items: [
            %{icon: "layout-grid", label: "Dashboard", route: "/"},
-           %{icon: "atom", label: "Molecules Bank", route: "/molecule-bank"},
-           %{icon: "network", label: "Model", route: "/model"},
-           %{icon: "microscope", label: "Research", route: "/research"},
+          #  %{icon: "network", label: "Model", route: "/model"},
+          #  %{icon: "microscope", label: "Research", route: "/research"},
+          %{icon: "network", label: "Research", route: "/model"},
+
+           %{icon: "atom", label: "History", route: "/molecule-bank"},
+
+           %{icon: "atom", label: "Explore", route: "/molecule-bank"},
            %{icon: "message-square-text", label: "Messages", route: "/message"},
            %{icon: "message-square-text", label: "Sketcher", route: "/sketcher"}
 
@@ -82,6 +86,6 @@ defmodule PhxMolbindWeb.ComponentsLive.Sidebar.Sidebar do
   end
 
   def handle_event("toggle_sidebar", _params, socket) do
-    {:noreply, update(socket, :sidebar_open, &(!&1))}
+    {:noreply, update(socket, :sidebar_open, fn open -> not open end)}
   end
 end
