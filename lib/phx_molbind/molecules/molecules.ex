@@ -25,6 +25,12 @@ defmodule PhxMolbind.Molecules.Molecules do
     |> Repo.insert()
   end
 
+  @spec generate_molecules(any()) ::
+          {:error,
+           {:error, map()}
+           | {:ok, any()}
+           | %{:__exception__ => true, :__struct__ => atom(), optional(atom()) => any()}}
+          | {:ok, list()}
   def generate_molecules(payload) do
     url = "https://health.api.nvidia.com/v1/biology/nvidia/molmim/generate"
 
