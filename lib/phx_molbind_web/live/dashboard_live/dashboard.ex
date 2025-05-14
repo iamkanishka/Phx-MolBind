@@ -4,23 +4,25 @@ defmodule PhxMolbindWeb.DashboardLive.Dashboard do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4 2xl:gap-7.5">
-      <%= for card <- @cta_card_list do %>
-        <.live_component
-          module={PhxMolbindWeb.ComponentsLive.DashboardLive.CTACard}
-          title={card.title}
-          subtitle={card.subtitle}
-          icon={card.icon}
-          id={"cta_card_#{card.title}"}
-        />
-      <% end %>
-    </div>
+    <.live_component module={PhxMolbindWeb.ComponentsLive.MainLayout} id={:main_layout}>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4 2xl:gap-7.5">
+        <%= for card <- @cta_card_list do %>
+          <.live_component
+            module={PhxMolbindWeb.ComponentsLive.DashboardLive.CTACard}
+            title={card.title}
+            subtitle={card.subtitle}
+            icon={card.icon}
+            id={"cta_card_#{card.title}"}
+          />
+        <% end %>
+      </div>
+    </.live_component>
     """
   end
 
   @impl true
   @spec mount(any(), any(), map()) :: {:ok, map()}
-  def  mount(_params, _session, socket) do
+  def mount(_params, _session, socket) do
     {:ok,
      socket
      |> assign(:page_title, "Dashboard")
@@ -51,5 +53,4 @@ defmodule PhxMolbindWeb.DashboardLive.Dashboard do
     IO.inspect(theme, label: "theme check ")
     {:noreply, assign(socket, :theme, theme)}
   end
-
 end
