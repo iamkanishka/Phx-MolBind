@@ -1,15 +1,3 @@
-<div class="flex" id="defaultlayout" phx-hook="ThemeProvider">
-  <.live_component sidebar_open={false}
-  module={PhxMolbindWeb.ComponentsLive.Sidebar.Sidebar}  page_name={"kansihka"} id={:sidebar} />
 
-  <div class="relative flex flex-1 flex-col lg:ml-72.5">
-    <.live_component sidebar_open={true}
-    module={PhxMolbindWeb.ComponentsLive.Header} id={:header} />
 
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto">
-        <.flash_group flash={@flash} /> {@inner_content}
-      </div>
-    </main>
-  </div>
-</div>
+{@inner_content}
