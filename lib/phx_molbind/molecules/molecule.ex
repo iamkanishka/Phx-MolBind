@@ -14,7 +14,7 @@ defmodule PhxMolbind.Molecules.Molecule do
     field :min_similarity, :float
     field :particles, :integer
     field :iterations, :integer
-    field :smi, :string
+    field :smiles, :string
     field :generated_molecules, :map, default: %{}
 
     belongs_to :user, PhxMolbind.Accounts.User
@@ -32,7 +32,7 @@ defmodule PhxMolbind.Molecules.Molecule do
       :min_similarity,
       :particles,
       :iterations,
-      :smi,
+      :smiles,
       :generated_molecules,
       :user_id
     ])
@@ -44,7 +44,7 @@ defmodule PhxMolbind.Molecules.Molecule do
       :min_similarity,
       :particles,
       :iterations,
-      :smi,
+      :smiles,
       :user_id
     ])
   end
