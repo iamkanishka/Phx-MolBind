@@ -19,7 +19,7 @@ defmodule PhxMolbind.Repo.Migrations.CreateMoleculeUser do
       add :min_similarity, :float, null: false
       add :particles, :integer, null: false
       add :iterations, :integer, null: false
-      add :smi, :text, null: false
+      add :smiles, :text, null: false
       add :generated_molecules, :map, default: %{}
       add :user_id, references(:users, on_delete: :delete_all), null: false
 
