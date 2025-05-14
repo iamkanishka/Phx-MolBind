@@ -6,7 +6,7 @@ defmodule PhxMolbindWeb.ComponentsLive.MoleculeRender.MoleculeRender do
     <div class="flex flex-row justify-center items start">
       <canvas
         id={@id}
-        phx-hook="renderSMILESmolZoomer"
+        phx-hook="renderSMILESmol"
         data-smiles={@smiles_structure}
         width="400"
         height="400"
