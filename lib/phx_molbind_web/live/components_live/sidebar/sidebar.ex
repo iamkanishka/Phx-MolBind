@@ -65,7 +65,7 @@ defmodule PhxMolbindWeb.ComponentsLive.Sidebar.Sidebar do
          menu_items: [
            %{icon: "layout-grid", label: "Dashboard", route: "/"},
            #  %{icon: "network", label: "Model", route: "/model"},
-           #  %{icon: "microscope", label: "Research", route: "/research"},
+            %{icon: "microscope", label: "Research Details", route: "/research"},
            %{icon: "network", label: "Research", route: "/model"},
            %{icon: "atom", label: "History", route: "/molecule-bank"},
            %{icon: "atom", label: "Explore", route: "/molecule-bank"},
