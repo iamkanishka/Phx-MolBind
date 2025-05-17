@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-contract MoleculeOptimizationStorage {
-    struct MoleculeOptimization {
+contract ReasearchMoleculeStorage {
+    struct ReasearchMolecule {
         string algorithm;
         uint256 numMolecules;
         string propertyName;
@@ -16,7 +16,7 @@ contract MoleculeOptimizationStorage {
         uint256 updatedAt;
     }
 
-    mapping(address => MoleculeOptimization[]) private userOptimizations;
+    mapping(address => ReasearchMolecule[]) private userOptimizations;
 
     event OptimizationAdded(address indexed user, uint256 index);
     event OptimizationUpdated(address indexed user, uint256 index);
@@ -37,7 +37,7 @@ contract MoleculeOptimizationStorage {
         string memory smiles,
         string memory generatedMolecules
     ) public {
-        MoleculeOptimization memory newOptimization = MoleculeOptimization({
+        ReasearchMolecule memory newOptimization = ReasearchMolecule({
             algorithm: algorithm,
             numMolecules: numMolecules,
             propertyName: propertyName,
@@ -67,7 +67,7 @@ contract MoleculeOptimizationStorage {
         string memory smiles,
         string memory generatedMolecules
     ) public validIndex(index) {
-        MoleculeOptimization storage optimization = userOptimizations[msg.sender][index];
+        ReasearchMolecule storage optimization = userOptimizations[msg.sender][index];
         optimization.algorithm = algorithm;
         optimization.numMolecules = numMolecules;
         optimization.propertyName = propertyName;
@@ -96,7 +96,7 @@ contract MoleculeOptimizationStorage {
         uint256 updatedAt
     ) {
         require(index < userOptimizations[user].length, "Invalid index");
-        MoleculeOptimization storage optimization = userOptimizations[user][index];
+        ReasearchMolecule storage optimization = userOptimizations[user][index];
         return (
             optimization.algorithm,
             optimization.numMolecules,
