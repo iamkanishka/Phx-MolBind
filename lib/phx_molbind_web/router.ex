@@ -18,15 +18,6 @@ defmodule PhxMolbindWeb.Router do
 
   pipeline :api do
     # plug :accepts, ["json"]
-
-    # Get a random nonce
-    get "/api/nonce", PhxMolbindWeb.Auth.AuthController, :nonce
-    # Verify
-    post "/api/auth/metamask", EthAuthController, :metamask
-
-    # post "/api/auth/nonce", EthAuthController, :get_nonce
-    # post "/api/auth/login", EthAuthController, :login
-    # post "/api/auth/logout", EthAuthController, :logout
   end
 
   scope "/", PhxMolbindWeb do
@@ -39,8 +30,7 @@ defmodule PhxMolbindWeb.Router do
     live "/sketcher", MolsketcherLive.Molsketcher, :home
     live "/profile", ProfileLive.Profile, :home
 
-    live "/sign-in", UserLoginLive, :love
-    live "/auth/metamask", MetaMaskLogin, :metamask
+    live "/auth/sign-in", MetaMaskLogin, :metamask
   end
 
   # Other scopes may use custom stacks.
