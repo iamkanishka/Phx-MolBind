@@ -1,118 +1,77 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
+pragma solidity ^0.8.19;
 
-contract ReasearchMoleculeStorage {
-    struct ReasearchMolecule {
+contract MoleculeStorage {
+    struct MoleculeEntry {
         string algorithm;
         uint256 numMolecules;
         string propertyName;
         bool minimize;
-        uint256 minSimilarity; // Stored as basis points (e.g., 0.75 => 7500)
         uint256 particles;
         uint256 iterations;
         string smiles;
-        string generatedMolecules; // JSON string representation
-        uint256 createdAt;
-        uint256 updatedAt;
+        string[] generatedMolecules; // Now an array of strings
+        uint256 minSimilarityScaled; // e.g., 0.82 => 8200 (4 decimal precision)
     }
 
-    mapping(address => ReasearchMolecule[]) private userOptimizations;
+    mapping(address => MoleculeEntry[]) public userEntries;
 
-    event OptimizationAdded(address indexed user, uint256 index);
-    event OptimizationUpdated(address indexed user, uint256 index);
+    event MoleculeAdded(address indexed user, uint256 entryIndex);
 
-    modifier validIndex(uint256 index) {
-        require(index < userOptimizations[msg.sender].length, "Invalid index");
-        _;
-    }
-
-    function addOptimization(
-        string memory algorithm,
-        uint256 numMolecules,
-        string memory propertyName,
-        bool minimize,
-        uint256 minSimilarity, // Expected in basis points
-        uint256 particles,
-        uint256 iterations,
-        string memory smiles,
-        string memory generatedMolecules
+    function addMoleculeEntry(
+        string memory _algorithm,
+        uint256 _numMolecules,
+        string memory _propertyName,
+        bool _minimize,
+        uint256 _particles,
+        uint256 _iterations,
+        string memory _smiles,
+        string[] memory _generatedMolecules,
+        uint256 _minSimilarityScaled
     ) public {
-        ReasearchMolecule memory newOptimization = ReasearchMolecule({
-            algorithm: algorithm,
-            numMolecules: numMolecules,
-            propertyName: propertyName,
-            minimize: minimize,
-            minSimilarity: minSimilarity,
-            particles: particles,
-            iterations: iterations,
-            smiles: smiles,
-            generatedMolecules: generatedMolecules,
-            createdAt: block.timestamp,
-            updatedAt: block.timestamp
+        MoleculeEntry memory newEntry = MoleculeEntry({
+            algorithm: _algorithm,
+            numMolecules: _numMolecules,
+            propertyName: _propertyName,
+            minimize: _minimize,
+            particles: _particles,
+            iterations: _iterations,
+            smiles: _smiles,
+            generatedMolecules: _generatedMolecules,
+            minSimilarityScaled: _minSimilarityScaled
         });
 
-        userOptimizations[msg.sender].push(newOptimization);
-        emit OptimizationAdded(msg.sender, userOptimizations[msg.sender].length - 1);
+        userEntries[msg.sender].push(newEntry);
+        emit MoleculeAdded(msg.sender, userEntries[msg.sender].length - 1);
     }
 
-    function updateOptimization(
-        uint256 index,
-        string memory algorithm,
-        uint256 numMolecules,
-        string memory propertyName,
-        bool minimize,
-        uint256 minSimilarity, // Expected in basis points
-        uint256 particles,
-        uint256 iterations,
-        string memory smiles,
-        string memory generatedMolecules
-    ) public validIndex(index) {
-        ReasearchMolecule storage optimization = userOptimizations[msg.sender][index];
-        optimization.algorithm = algorithm;
-        optimization.numMolecules = numMolecules;
-        optimization.propertyName = propertyName;
-        optimization.minimize = minimize;
-        optimization.minSimilarity = minSimilarity;
-        optimization.particles = particles;
-        optimization.iterations = iterations;
-        optimization.smiles = smiles;
-        optimization.generatedMolecules = generatedMolecules;
-        optimization.updatedAt = block.timestamp;
-
-        emit OptimizationUpdated(msg.sender, index);
+    function getMoleculeCount(address user) external view returns (uint256) {
+        return userEntries[user].length;
     }
 
-    function getOptimization(address user, uint256 index) public view returns (
-        string memory algorithm,
-        uint256 numMolecules,
-        string memory propertyName,
-        bool minimize,
-        uint256 minSimilarity,
-        uint256 particles,
-        uint256 iterations,
-        string memory smiles,
-        string memory generatedMolecules,
-        uint256 createdAt,
-        uint256 updatedAt
+    function getMoleculeByIndex(address user, uint256 index) external view returns (
+        string memory,
+        uint256,
+        string memory,
+        bool,
+        uint256,
+        uint256,
+        string memory,
+        string[] memory,
+        uint256
     ) {
-        require(index < userOptimizations[user].length, "Invalid index");
-        ReasearchMolecule storage optimization = userOptimizations[user][index];
+        require(index < userEntries[user].length, "Index out of bounds");
+        MoleculeEntry memory m = userEntries[user][index];
         return (
-            optimization.algorithm,
-            optimization.numMolecules,
-            optimization.propertyName,
-            optimization.minimize,
-            optimization.minSimilarity,
-            optimization.particles,
-            optimization.iterations,
-            optimization.smiles,
-            optimization.generatedMolecules,
-            optimization.createdAt,
-            optimization.updatedAt
+            m.algorithm,
+            m.numMolecules,
+            m.propertyName,
+            m.minimize,
+            m.particles,
+            m.iterations,
+            m.smiles,
+            m.generatedMolecules,
+            m.minSimilarityScaled
         );
-    }
-
-    function getOptimizationCount(address user) public view returns (uint256) {
-        return userOptimizations[user].length;
     }
 }
