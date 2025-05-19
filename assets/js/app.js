@@ -28,7 +28,7 @@ import ThemeProvider from "./ThemeProvider";
 import renderSMILESmol from "./renderSMILESmol";
 import renderSMILESmolZoomer from "./renderSMILESmolZoomer";
 import ThreeDrenderSmilemol from "./ThreeDrenderSmilemol";
-
+import Profile from "./Profile";
 import Molsketcher from "./Molsketcher";
 
 Hooks.MetaMaskLogin = MetaMaskLogin;
@@ -37,6 +37,7 @@ Hooks.renderSMILESmol = renderSMILESmol;
 Hooks.renderSMILESmolZoomer = renderSMILESmolZoomer;
 Hooks.ThreeDrenderSmilemol = ThreeDrenderSmilemol;
 Hooks.Molsketcher = Molsketcher;
+Hooks.Profile = Profile;
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
