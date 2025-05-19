@@ -32,11 +32,11 @@ defmodule PhxMolbindWeb.DashboardLive.Dashboard do
   def assign_CTA_card_list(socket) do
     socket
     |> assign(:cta_card_list, [
-      %{title: "Molecule Bank", subtitle: "get access to more molecules", icon: "atom"},
-      %{title: "Generate Molecule", subtitle: "get access to more molecules", icon: "network"},
+      %{title: "Molecule Bank", subtitle: "Get access to generated molecules", icon: "atom"},
+      %{title: "Generate Molecule", subtitle: "Genearte  more molecules", icon: "network"},
       %{
         title: "Search Compounds",
-        subtitle: "get access to more molecules",
+        subtitle: "Explore generated compounds",
         icon: "search"
       },
       %{
