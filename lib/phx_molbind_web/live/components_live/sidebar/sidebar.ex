@@ -64,14 +64,12 @@ defmodule PhxMolbindWeb.ComponentsLive.Sidebar.Sidebar do
          name: "",
          menu_items: [
            %{icon: "layout-grid", label: "Dashboard", route: "/"},
-           #  %{icon: "network", label: "Model", route: "/model"},
-            %{icon: "microscope", label: "Research Details", route: "/research"},
            %{icon: "network", label: "Research", route: "/model"},
+           %{icon: "atom", label: "Explore", route: "/research"},
            %{icon: "atom", label: "History", route: "/molecule-bank"},
-           %{icon: "atom", label: "Explore", route: "/molecule-bank"},
-           %{icon: "message-square-text", label: "Messages", route: "/message"},
            %{icon: "message-square-text", label: "Sketcher", route: "/sketcher"},
-           %{icon: "message-square-text", label: "Pofile", route: "/profile"}
+           %{icon: "message-square-text", label: "Pofile", route: "/profile"},
+           %{icon: "message-square-text", label: "Messages", route: "/message"}
          ]
        },
        %{
