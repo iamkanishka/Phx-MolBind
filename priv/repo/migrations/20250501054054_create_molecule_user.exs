@@ -1,16 +1,7 @@
-defmodule PhxMolbind.Repo.Migrations.CreateMoleculeUser do
+defmodule PhxMolbind.Repo.Migrations.CreateMoleculeAndUser do
   use Ecto.Migration
 
   def change do
-    create table(:users) do
-      add :address, :string, null: false
-      add :last_login_at, :utc_datetime_usec
-
-      timestamps()
-    end
-
-    create unique_index(:users, [:address])
-
     create table(:molecule_optimizations) do
       add :algorithm, :string, null: false
       add :num_molecules, :integer, null: false
@@ -21,11 +12,9 @@ defmodule PhxMolbind.Repo.Migrations.CreateMoleculeUser do
       add :iterations, :integer, null: false
       add :smiles, :text, null: false
       add :generated_molecules, :map, default: %{}
-      add :user_id, references(:users, on_delete: :delete_all), null: false
+      add :user_id, :text, null: false
 
       timestamps()
     end
-
-    create index(:molecule_optimizations, [:user_id])
   end
 end
