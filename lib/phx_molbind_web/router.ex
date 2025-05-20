@@ -29,6 +29,7 @@ defmodule PhxMolbindWeb.Router do
     live "/research", ResearchLive.Research, :home
     live "/sketcher", MolsketcherLive.Molsketcher, :home
     live "/profile", ProfileLive.Profile, :home
+    live "/settings", SettingsLive.Settings, :home
 
     live "/auth/sign-in", MetaMaskLogin, :metamask
   end
