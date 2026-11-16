@@ -23,8 +23,7 @@ end
 # NVIDIA BioNeMo MolMIM API key (PhxMolbind.Molecules.Molecules).
 # Never hardcode this — set it in the environment, e.g.:
 #   export NVIDIA_API_KEY=nvapi-...
-# config :phx_molbind, :nvidia_api_key, System.get_env("NVIDIA_API_KEY")
-config :phx_molbind, :nvidia_api_key, "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"
+config :phx_molbind, :nvidia_api_key, System.get_env("NVIDIA_API_KEY")
 
 
 if config_env() == :prod do
