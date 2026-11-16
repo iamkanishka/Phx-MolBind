@@ -17,7 +17,10 @@ defmodule PhxMolbind.Molecules.Molecule do
     field :smiles, :string
     field :generated_molecules, :map, default: %{}
 
+    field :parent_candidate_index, :integer
+
     belongs_to :user, PhxMolbind.Accounts.User
+    belongs_to :parent_run, __MODULE__
 
     timestamps()
   end
@@ -34,7 +37,9 @@ defmodule PhxMolbind.Molecules.Molecule do
       :iterations,
       :smiles,
       :generated_molecules,
-      :user_id
+      :user_id,
+      :parent_run_id,
+      :parent_candidate_index
     ])
     |> validate_required([
       :algorithm,

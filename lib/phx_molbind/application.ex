@@ -2,19 +2,19 @@ defmodule PhxMolbind.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
-alias PhxMolbind.EthAuth.Auth
 
   use Application
 
   @impl true
   def start(_type, _args) do
-    Auth.start_link([])
     children = [
       PhxMolbindWeb.Telemetry,
       PhxMolbind.Repo,
       {DNSCluster, query: Application.get_env(:phx_molbind, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: PhxMolbind.PubSub},
-      # Start the Finch HTTP client for sending emails
+      # Nonce/login-ticket store for wallet sign-in (PhxMolbindWeb.Auth.MetaMaskLogin)
+      PhxMolbind.EthAuth.Auth,
+      # Start the Finch HTTP client for outbound requests (e.g. molecule generation)
       {Finch, name: PhxMolbind.Finch},
       # Start a worker by calling: PhxMolbind.Worker.start_link(arg)
       # {PhxMolbind.Worker, arg},

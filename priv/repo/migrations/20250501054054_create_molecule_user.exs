@@ -12,9 +12,11 @@ defmodule PhxMolbind.Repo.Migrations.CreateMoleculeAndUser do
       add :iterations, :integer, null: false
       add :smiles, :text, null: false
       add :generated_molecules, :map, default: %{}
-      add :user_id, :text, null: false
+      add :user_id, references(:users, on_delete: :delete_all), null: false
 
       timestamps()
     end
+
+    create index(:molecule_optimizations, [:user_id])
   end
 end

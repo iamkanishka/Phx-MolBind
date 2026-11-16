@@ -28,8 +28,13 @@ import ThemeProvider from "./ThemeProvider";
 import renderSMILESmol from "./renderSMILESmol";
 import renderSMILESmolZoomer from "./renderSMILESmolZoomer";
 import ThreeDrenderSmilemol from "./ThreeDrenderSmilemol";
-import Profile from "./Profile";
 import Molsketcher from "./Molsketcher";
+import CommandPalette from "./CommandPalette";
+import CopyButton from "./CopyButton";
+import DownloadCanvas from "./DownloadCanvas";
+import SuggestNav from "./SuggestNav";
+import ChatScroll from "./ChatScroll";
+import StructureViewer from "./StructureViewer";
 
 Hooks.MetaMaskLogin = MetaMaskLogin;
 Hooks.ThemeProvider = ThemeProvider;
@@ -37,7 +42,12 @@ Hooks.renderSMILESmol = renderSMILESmol;
 Hooks.renderSMILESmolZoomer = renderSMILESmolZoomer;
 Hooks.ThreeDrenderSmilemol = ThreeDrenderSmilemol;
 Hooks.Molsketcher = Molsketcher;
-Hooks.Profile = Profile;
+Hooks.CommandPalette = CommandPalette;
+Hooks.CopyButton = CopyButton;
+Hooks.DownloadCanvas = DownloadCanvas;
+Hooks.SuggestNav = SuggestNav;
+Hooks.ChatScroll = ChatScroll;
+Hooks.StructureViewer = StructureViewer;
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")

@@ -153,12 +153,12 @@ defmodule PhxMolbindWeb.UserAuth do
     socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
-      {:cont, socket}
+      {:cont, attach_shell_hooks(socket)}
     else
       socket =
         socket
         |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/users/log_in")
+        |> Phoenix.LiveView.redirect(to: ~p"/auth/sign-in")
 
       {:halt, socket}
     end
@@ -172,6 +172,31 @@ defmodule PhxMolbindWeb.UserAuth do
     else
       {:cont, socket}
     end
+  end
+
+  # Hooks shared by every authenticated LiveView:
+  #
+  #   * `:current_path` is kept up to date on every navigation so the layout
+  #     can highlight the active sidebar entry.
+  #   * "theme:init" is pushed by the ThemeProvider JS hook on every page.
+  #     Handling it here means individual LiveViews don't each need a
+  #     handle_event clause (some had none and would crash on mount).
+  defp attach_shell_hooks(socket) do
+    socket
+    |> Phoenix.Component.assign_new(:current_path, fn -> "/" end)
+    |> Phoenix.LiveView.attach_hook(:current_path, :handle_params, fn _params, uri, socket ->
+      {:cont, Phoenix.Component.assign(socket, :current_path, URI.parse(uri).path || "/")}
+    end)
+    |> Phoenix.LiveView.attach_hook(:theme_init, :handle_event, fn
+      "theme:init", %{"theme" => theme}, socket when theme in ~w(light dark system) ->
+        {:halt, Phoenix.Component.assign(socket, :theme, theme)}
+
+      "theme:init", _params, socket ->
+        {:halt, socket}
+
+      _event, _params, socket ->
+        {:cont, socket}
+    end)
   end
 
   defp mount_current_user(socket, session) do
@@ -208,7 +233,7 @@ defmodule PhxMolbindWeb.UserAuth do
       conn
       |> put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
-      |> redirect(to: ~p"/users/log_in")
+      |> redirect(to: ~p"/auth/sign-in")
       |> halt()
     end
   end

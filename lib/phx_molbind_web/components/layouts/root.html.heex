@@ -1,33 +1,55 @@
 <!DOCTYPE html>
-<html lang="en" class="[scrollbar-gutter:stable]"   class="dark">
+<html lang="en" class="[scrollbar-gutter:stable]">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="PhxMolbind" suffix=" · Phoenix Framework">
+    <.live_title default="Phoenix Molecule Research" suffix=" · PhxMolbind">
       {assigns[:page_title]}
     </.live_title>
-    <link phx-track-static rel="stylesheet" href={~p"/assets/ChemDoodleWeb.css"} />
-    <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/ChemDoodleWeb.js"}>
-      
-    </script>
 
-      <link phx-track-static rel="stylesheet" href={~p"/assets/jquery-ui-1.11.4.css"} />
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/ChemDoodleWeb-uis.js"}>
-      
-    </script>
-
-    <script src="https://unpkg.com/smiles-drawer@2.0.1/dist/smiles-drawer.min.js"></script>
+    <link rel="icon" type="image/png" href={~p"/images/logo.png"} />
     
+<!--
+      Set the dark/light class before first paint so there's no flash of
+      the wrong theme while ThemeProvider.js (assets/js/ThemeProvider.js)
+      mounts. Must run synchronously, before app.js loads.
+    -->
+    <script>
+      (function () {
+        var stored = localStorage.getItem("theme") || "system";
+        var isDark =
+          stored === "dark" ||
+          (stored === "system" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", isDark);
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+
+    <link phx-track-static rel="stylesheet" href={~p"/assets/ChemDoodleWeb.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/ChemDoodleWeb.js"}>
+    </script>
+
+    <link phx-track-static rel="stylesheet" href={~p"/assets/jquery-ui-1.11.4.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/ChemDoodleWeb-uis.js"}>
+    </script>
+
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
-
- 
-
   </head>
-  <body class="bg-white dark:bg-black" id="body-theme-provider" phx-hook="Theme" >
-     {@inner_content}
+  <body
+    class="bg-white font-sans text-black antialiased dark:bg-boxdark-2 dark:text-white"
+    id="body-theme-provider"
+    phx-hook="ThemeProvider"
+  >
+    {@inner_content}
   </body>
 </html>

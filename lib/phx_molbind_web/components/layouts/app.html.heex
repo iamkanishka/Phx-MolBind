@@ -1,3 +1,29 @@
-
-
-{@inner_content}
+<%= if assigns[:current_user] do %>
+  <a
+    href="#main-content"
+    class="sr-only z-[99999] rounded bg-white px-3 py-2 text-black focus:not-sr-only focus:fixed focus:left-2 focus:top-2"
+  >
+    Skip to content
+  </a>
+  <.sidebar current_path={assigns[:current_path] || "/"} />
+  <div class="relative flex min-h-screen flex-1 flex-col lg:ml-72.5">
+    <.topbar
+      current_user={@current_user}
+      current_path={assigns[:current_path] || "/"}
+      page_title={assigns[:page_title]}
+    />
+    <main id="main-content" class="px-4 py-6 sm:px-6 lg:px-8" tabindex="-1">
+      <div class="mx-auto w-full max-w-screen-2xl">
+        <.flash_group flash={@flash} />
+        {@inner_content}
+      </div>
+    </main>
+  </div>
+  <.command_palette />
+  <div id="theme-provider" phx-hook="ThemeProvider" class="hidden"></div>
+<% else %>
+  <main id="main-content">
+    <.flash_group flash={@flash} />
+    {@inner_content}
+  </main>
+<% end %>

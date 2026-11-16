@@ -1,8 +1,10 @@
 defmodule PhxMolbindWeb.PageControllerTest do
   use PhxMolbindWeb.ConnCase
 
-  test "GET /", %{conn: conn} do
+  # "/" is the signed-in dashboard (the old Phoenix welcome page no longer
+  # exists), so anonymous visitors are sent to wallet sign-in.
+  test "GET / sends anonymous visitors to sign-in", %{conn: conn} do
     conn = get(conn, ~p"/")
-    assert html_response(conn, 200) =~ "Peace of mind from prototype to production"
+    assert redirected_to(conn) == ~p"/auth/sign-in"
   end
 end

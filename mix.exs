@@ -32,7 +32,6 @@ defmodule PhxMolbind.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:pbkdf2_elixir, "~> 2.0"},
       {:phoenix, "~> 1.7.21"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
@@ -59,12 +58,12 @@ defmodule PhxMolbind.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
-      {:ueberauth, "~> 0.10"},
-      {:ueberauth_google, "~> 0.10"},
       {:ethers, "~> 0.6.6"},
-      {:ex_keccak, "~> 0.7.6"},
-      {:jose, "~> 1.11"},
-      {:joken, "~> 2.6"},
+      {:ex_keccak, "~> 0.7.8"},
+      # Audited libsecp256k1 NIF used for wallet-signature recovery
+      # (PhxMolbind.EthSign.EthSignature) — replaces a hand-rolled,
+      # buggy pure-Elixir ECC implementation.
+      {:ex_secp256k1, "~> 0.7.4"},
       {:timex, "~> 3.7"}
     ]
   end

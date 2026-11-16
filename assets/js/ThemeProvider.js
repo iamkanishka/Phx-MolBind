@@ -14,15 +14,21 @@ export default {
     this.applyTheme(theme)
     this.pushEvent("theme:init", { theme })
 
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    this.media = window.matchMedia("(prefers-color-scheme: dark)")
+    this.onMediaChange = () => {
       if ((localStorage.getItem("theme") || "system") === "system") {
         this.applyTheme("system")
       }
-    })
+    }
+    this.media.addEventListener("change", this.onMediaChange)
 
     this.handleEvent("theme:set", ({ theme }) => {
       localStorage.setItem("theme", theme)
       this.applyTheme(theme)
     })
+  },
+
+  destroyed() {
+    if (this.media) this.media.removeEventListener("change", this.onMediaChange)
   }
 };

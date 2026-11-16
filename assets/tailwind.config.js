@@ -16,9 +16,9 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      satoshi: ["Satoshi", "sans-serif"],
-      inter: ["Inter", "sans-serif"],
-      poppins: ["Poppins"],
+      display: ["Space Grotesk", ...defaultTheme.fontFamily.sans],
+      sans: ["Inter", ...defaultTheme.fontFamily.sans],
+      mono: ["JetBrains Mono", ...defaultTheme.fontFamily.mono],
     },
     screens: {
       "2xsm": "375px",
@@ -32,23 +32,65 @@ module.exports = {
         transparent: "transparent",
         white: "#FFFFFF",
         black: "#1C2434",
-        red: "#FB5454",
+        // `red` and `gray` used to be single colours, which silently removed the
+        // whole shade scale (text-red-600, bg-gray-100 ... generated nothing).
+        // DEFAULT keeps the original value for existing `bg-red`/`bg-gray` uses;
+        // the shades are Tailwind's standard scale.
+        red: {
+          DEFAULT: "#FB5454",
+          50: "#FEF2F2",
+          100: "#FEE2E2",
+          300: "#FCA5A5",
+          400: "#F87171",
+          500: "#EF4444",
+          600: "#DC2626",
+          700: "#B91C1C",
+          800: "#991B1B",
+          900: "#7F1D1D",
+          950: "#450A0A",
+        },
         "black-2": "#010101",
         body: "#64748B",
         bodydark: "#AEB7C0",
         bodydark1: "#DEE4EE",
         bodydark2: "#8A99AF",
-        primary: "#3C50E0",
-        secondary: "#80CAEE",
+        // Ember palette, pulled from the phoenix/molecule mark
+        // (priv/static/images/logo.png) rather than a generic
+        // dashboard-template blue.
+        primary: "#E4572E",
+        // Accessible accent tokens (WCAG 2.2 AA, measured):
+        //   accent        #BF3D19  text on light surfaces  5.39:1 white, 4.76:1 on the primary tint
+        //                          and background for white button text (5.39:1)
+        //   accent-hover  #A53413  hover/pressed state of accent backgrounds
+        //   accent-light  #F27A55  text on dark surfaces   >=4.9:1 on every dark surface used
+        // `primary` (#E4572E) is only 3.68:1 on white, so keep it for fills,
+        // borders and large decorative uses, not for normal-size text.
+        accent: "#BF3D19",
+        "accent-hover": "#A53413",
+        "accent-light": "#F27A55",
+        "primary-dark": "#C0431F",
+        secondary: "#F6A345",
         stroke: "#E2E8F0",
-        gray: "#EFF4FB",
+        gray: {
+          DEFAULT: "#EFF4FB",
+          50: "#F9FAFB",
+          100: "#F3F4F6",
+          200: "#E5E7EB",
+          300: "#D1D5DB",
+          400: "#9CA3AF",
+          500: "#6B7280",
+          600: "#4B5563",
+          700: "#374151",
+          800: "#1F2937",
+          900: "#111827",
+        },
         graydark: "#333A48",
         "gray-2": "#F7F9FC",
         "gray-3": "#FAFAFA",
         whiten: "#F1F5F9",
         whiter: "#F5F7FD",
-        boxdark: "#24303F",
-        "boxdark-2": "#1A222C",
+        boxdark: "#181F2A",
+        "boxdark-2": "#11161F",
         strokedark: "#2E3A47",
         "form-strokedark": "#3d4d60",
         "form-input": "#1d2a39",

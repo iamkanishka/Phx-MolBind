@@ -1,5 +1,7 @@
+import { loadSmilesDrawer } from "./loadScript";
+
 export default {
-  mounted() {
+  async mounted() {
     const canvas = this.el;
     const context = canvas.getContext("2d");
     const smiles = canvas.dataset.smiles;
@@ -18,6 +20,13 @@ export default {
       drawer.draw(moleculeTree, canvas, "light", false);
     };
 
+    try {
+      await loadSmilesDrawer();
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+
     SmilesDrawer.parse(
       smiles,
       (tree) => {
@@ -28,11 +37,16 @@ export default {
       (err) => console.error("Error parsing SMILES:", err)
     );
 
-    canvas.addEventListener("wheel", (event) => {
+    this.onWheel = (event) => {
       event.preventDefault();
       const zoomFactor = 1.1;
       scale *= event.deltaY < 0 ? zoomFactor : 1 / zoomFactor;
       render();
-    });
+    };
+    canvas.addEventListener("wheel", this.onWheel, { passive: false });
+  },
+
+  destroyed() {
+    if (this.onWheel) this.el.removeEventListener("wheel", this.onWheel);
   },
 };

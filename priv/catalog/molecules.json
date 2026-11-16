@@ -1,0 +1,109 @@
+{
+  "audit": {
+    "tool": "RDKit",
+    "checked": "2026-10-17",
+    "note": "Formula and stereocentre counts are computed from the SMILES by RDKit. molecular_weight is the listed reference value and was checked against the computed weight (tolerance 0.02 g/mol). None of these values are experimental measurements."
+  },
+  "molecules": [
+    {
+      "id": "aspirin",
+      "name": "Aspirin",
+      "smiles": "CC(=O)OC1=CC=CC=C1C(O)=O",
+      "formula": "C9H8O4",
+      "molecular_weight": 180.16,
+      "category": "Pain reliever/NSAID",
+      "stereocentres": 0,
+      "stereocentres_defined": 0
+    },
+    {
+      "id": "caffeine",
+      "name": "Caffeine",
+      "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+      "formula": "C8H10N4O2",
+      "molecular_weight": 194.19,
+      "category": "Stimulant",
+      "stereocentres": 0,
+      "stereocentres_defined": 0
+    },
+    {
+      "id": "benzene",
+      "name": "Benzene",
+      "smiles": "C1=CC=CC=C1",
+      "formula": "C6H6",
+      "molecular_weight": 78.11,
+      "category": "Industrial solvent",
+      "stereocentres": 0,
+      "stereocentres_defined": 0
+    },
+    {
+      "id": "glucose",
+      "name": "Glucose",
+      "smiles": "OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O",
+      "formula": "C6H12O6",
+      "molecular_weight": 180.16,
+      "category": "Energy source/sugar",
+      "stereocentres": 5,
+      "stereocentres_defined": 4
+    },
+    {
+      "id": "penicillin",
+      "name": "Penicillin",
+      "smiles": "CC1(C)SC2C(NC(=O)Cc3ccccc3)C(=O)N2C1C(O)=O",
+      "formula": "C16H18N2O4S",
+      "molecular_weight": 334.39,
+      "category": "Antibiotic",
+      "stereocentres": 3,
+      "stereocentres_defined": 0
+    },
+    {
+      "id": "ibuprofen",
+      "name": "Ibuprofen",
+      "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+      "formula": "C13H18O2",
+      "molecular_weight": 206.28,
+      "category": "Pain reliever/NSAID",
+      "stereocentres": 1,
+      "stereocentres_defined": 0
+    },
+    {
+      "id": "acetaminophen",
+      "name": "Acetaminophen",
+      "smiles": "CC(=O)NC1=CC=C(O)C=C1",
+      "formula": "C8H9NO2",
+      "molecular_weight": 151.16,
+      "category": "Pain reliever/Antipyretic",
+      "stereocentres": 0,
+      "stereocentres_defined": 0
+    },
+    {
+      "id": "morphine",
+      "name": "Morphine",
+      "smiles": "CN1CCC23C4C1CC5=C2C(=C(C=C5)O)OC3C(C=C4)O",
+      "formula": "C17H19NO3",
+      "molecular_weight": 285.34,
+      "category": "Pain reliever/Opiate",
+      "stereocentres": 5,
+      "stereocentres_defined": 0
+    },
+    {
+      "id": "nicotine",
+      "name": "Nicotine",
+      "smiles": "CN1CCCC1C2=CN=CC=C2",
+      "formula": "C10H14N2",
+      "molecular_weight": 162.23,
+      "category": "Stimulant",
+      "stereocentres": 1,
+      "stereocentres_defined": 0
+    },
+    {
+      "id": "ethanol",
+      "name": "Ethanol",
+      "smiles": "CCO",
+      "formula": "C2H6O",
+      "molecular_weight": 46.07,
+      "category": "Alcohol/Disinfectant",
+      "stereocentres": 0,
+      "stereocentres_defined": 0
+    }
+  ]
+}

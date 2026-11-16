@@ -7,6 +7,10 @@
 # General application configuration
 import Config
 
+# Where uploaded avatars are stored. Override with AVATAR_DIR in production
+# (see config/runtime.exs) and point it at a persistent volume.
+config :phx_molbind, :avatar_dir, Path.expand("../priv/uploads/avatars", __DIR__)
+
 config :phx_molbind,
   ecto_repos: [PhxMolbind.Repo],
   generators: [timestamp_type: :utc_datetime]

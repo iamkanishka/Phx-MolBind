@@ -1,328 +1,313 @@
 defmodule PhxMolbindWeb.ResearchLive.Research do
+  @moduledoc """
+  PubChem compound lookup (`/research`).
+
+  Suggestions and lookups run asynchronously. Each request gets a sequence
+  number and a response is applied only if it is still the latest, so a slow
+  answer for an older query can never replace newer results.
+
+  Values are shown exactly as PubChem reports them. XLogP, TPSA, complexity
+  and the other descriptors are PubChem *computed* properties, not
+  experimental measurements, and the page says so.
+  """
   use PhxMolbindWeb, :live_view
 
   alias PhxMolbindWeb.ResearchLive.CompoundSearch
 
-  def render(assigns) do
-    ~H"""
-    <.live_component module={PhxMolbindWeb.ComponentsLive.MainLayout} id={:main_layout}>
-      <div class="container mx-auto h-[140dvh] p-0">
-        <button phx-click="toggle-theme">Toggle Theme</button>
-        <div class="mb-6 flex flex-col items-center md:flex-row md:justify-between">
-          <h2 class="text-title-md2 font-semibold text-black dark:text-white">
-            Compound Search
-          </h2>
+  @properties [
+    {"MolecularFormula", "Molecular formula", nil},
+    {"MolecularWeight", "Molecular weight", "g/mol"},
+    {"InChIKey", "InChIKey", nil},
+    {"IUPACName", "IUPAC name", nil},
+    {"XLogP", "XLogP", nil},
+    {"ExactMass", "Exact mass", "g/mol"},
+    {"MonoisotopicMass", "Monoisotopic mass", "g/mol"},
+    {"TPSA", "Topological polar surface area", "Å²"},
+    {"Complexity", "Complexity", nil},
+    {"Charge", "Charge", nil},
+    {"HBondDonorCount", "Hydrogen bond donors", nil},
+    {"HBondAcceptorCount", "Hydrogen bond acceptors", nil},
+    {"RotatableBondCount", "Rotatable bonds", nil},
+    {"HeavyAtomCount", "Heavy atoms", nil}
+  ]
 
-          <%!-- <input
-            type="text"
-            name="compound_name"
-            value={@compound_name}
-            phx-debounce="300"
-            phx-keydown="search_compound"
-            phx-input="update_compound"
-            class="border-gray-300 w-full rounded-lg border bg-white p-3 pl-10 text-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter a compound name"
-            autocomplete="off"
-          /> --%>
-          <div class="relative mt-4 flex flex-1 md:mt-0 md:justify-end" phx-click-away="hide_dropdown">
-            <div class="relative w-full md:w-96">
-              <form phx-change="update_compound" phx-submit="noop">
-                <input
-                  type="text"
-                  name="compound_name"
-                  value={@compound_name}
-                  phx-debounce="500"
-                  phx-focus="show_dropdown"
-                  class="border-gray-300 w-full rounded-lg border bg-white p-3 pl-10 text-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter a compound name"
-                  autocomplete="off"
-                />
-              </form>
-
-              <span class="absolute inset-y-0 right-3 flex items-center">
-                <.icon name="hero-search" class="text-gray-500" />
-              </span>
-
-              <ul
-                :if={@show_dropdown and @suggestions != []}
-                class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg"
-              >
-                <%= for compound <- @suggestions do %>
-                  <li
-                    phx-click="select_compound"
-                    phx-value-name={compound}
-                    class="cursor-pointer px-4 py-2 hover:bg-blue-100"
-                  >
-                    {compound}
-                  </li>
-                <% end %>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <%= if @error do %>
-          <p class="text-red-600 mt-6">{@error}</p>
-        <% end %>
-
-        <%= if @compound_data do %>
-          <div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-
-    <!-- Basic Information -->
-            <div class="dark:bg-gray-800 space-y-3 rounded-lg bg-white dark:bg-black p-6 shadow-md">
-              <h2 class="text-gray-700 mb-4 text-xl text-black dark:text-white">Basic Information</h2>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">Molecular Formula:</strong> {@compound_data[
-                  "MolecularFormula"
-                ]}
-              </p>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">Molecular Weight:</strong> {@compound_data[
-                  "MolecularWeight"
-                ]} g/mol
-              </p>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">InChIKey:</strong> {@compound_data[
-                  "InChIKey"
-                ]}
-              </p>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">Canonical SMILES:</strong>
-                <%!-- <.live_component
-                  module={YourAppWeb.MoleculeStructureComponent}
-                  id={@compound_data["CanonicalSMILES"]}
-                  structure={@compound_data["CanonicalSMILES"]}
-                /> --%>
-                <canvas
-                  id="smiles-canvas-research"
-                  phx-hook="renderSMILESmol"
-                  data-smiles={@compound_data["CanonicalSMILES"]}
-                  width="200"
-                  height="200"
-                  data-width="200"
-                  data-height="200"
-                >
-                </canvas>
-              </p>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">Isomeric SMILES:</strong> {@compound_data[
-                  "IsomericSMILES"
-                ]}
-              </p>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">IUPAC Name:</strong> {@compound_data[
-                  "IUPACName"
-                ]}
-              </p>
-            </div>
-
-    <!-- Physical Properties -->
-            <div class="dark:bg-gray-800 space-y-3 rounded-lg bg-white p-6 shadow-md">
-              <h2 class="text-gray-700 mb-4 text-xl text-black dark:text-white">
-                Physical Properties
-              </h2>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">XLogP:</strong> {@compound_data[
-                  "XLogP"
-                ]}
-              </p>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">Exact Mass:</strong> {@compound_data[
-                  "ExactMass"
-                ]} g/mol
-              </p>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">Monoisotopic Mass:</strong> {@compound_data[
-                  "MonoisotopicMass"
-                ]} g/mol
-              </p>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">
-                  Topological Polar Surface Area (TPSA):
-                </strong>
-                 {@compound_data["TPSA"]} Å²
-              </p>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">Complexity:</strong> {@compound_data[
-                  "Complexity"
-                ]}
-              </p>
-
-              <p>
-                <strong class="text-gray-600 dark:text-white">Charge:</strong> {@compound_data[
-                  "Charge"
-                ]}
-              </p>
-            </div>
-
-    <!-- Additional Information -->
-            <div class="dark:bg-gray-800 space-y-3 rounded-lg bg-white p-6 shadow-md md:col-span-2">
-              <h2 class="text-gray-700 mb-4 text-xl text-black dark:text-white">
-                Additional Information
-              </h2>
-
-              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <p>
-                  <strong class="text-gray-600 dark:text-white">Hydrogen Bond Donors:</strong> {@compound_data[
-                    "HBondDonorCount"
-                  ]}
-                </p>
-
-                <p>
-                  <strong class="text-gray-600 dark:text-white">Hydrogen Bond Acceptors:</strong> {@compound_data[
-                    "HBondAcceptorCount"
-                  ]}
-                </p>
-
-                <p>
-                  <strong class="text-gray-600 dark:text-white">Rotatable Bonds:</strong> {@compound_data[
-                    "RotatableBondCount"
-                  ]}
-                </p>
-
-                <p>
-                  <strong class="text-gray-600 dark:text-white">Heavy Atom Count:</strong> {@compound_data[
-                    "HeavyAtomCount"
-                  ]}
-                </p>
-              </div>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </.live_component>
-    """
-  end
-
+  @impl true
   def mount(_params, _session, socket) do
     {:ok,
      socket
+     |> assign(:page_title, "Research")
      |> assign(:compound_name, "")
      |> assign(:compound_data, nil)
+     |> assign(:smiles, nil)
+     |> assign(:record_url, nil)
+     |> assign(:loading, false)
      |> assign(:show_dropdown, false)
      |> assign(:suggestions, [])
-     |> assign(:error, nil)}
-  end
-
-  def handle_event("search_compound", %{"key" => "Enter", "value" => input_value}, socket) do
-    search(socket, input_value)
-  end
-
-  def handle_event("search_compound", _params, socket) do
-    # Ignore other keys
-    {:noreply, socket}
-  end
-
-  defp search(socket, value) do
-    socket = assign(socket, compound_name: value, suggestions: [], show_dropdown: false)
-
-    case CompoundSearch.lookup(value) do
-      {:ok, data} ->
-        {:noreply,
-         socket
-         |> assign(:compound_data, data)
-         |> assign(:error, nil)}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> assign(:compound_data, nil)
-         |> assign(:error, reason)}
-    end
+     |> assign(:seq, 0)
+     |> assign(:error, nil)
+     |> assign(:properties, @properties)}
   end
 
   @impl true
-  def handle_event("toggle-theme", _params, socket) do
-    IO.inspect(socket.assigns[:theme])
+  def render(assigns) do
+    ~H"""
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <h2 class="text-title-md2 font-semibold text-black dark:text-white">Compound search</h2>
 
-    new_theme =
-      case socket.assigns[:theme] do
-        "light" -> "dark"
-        "dark" -> "system"
-        _ -> "light"
-      end
+        <div
+          id="compound-search"
+          phx-hook="SuggestNav"
+          phx-click-away="hide_dropdown"
+          class="relative w-full md:w-96"
+        >
+          <form phx-change="update_compound" phx-submit="search_submit" role="search">
+            <label for="compound-name" class="sr-only">Compound name</label>
+            <input
+              id="compound-name"
+              type="text"
+              name="compound_name"
+              value={@compound_name}
+              phx-debounce="400"
+              phx-focus="show_dropdown"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded={to_string(@show_dropdown and @suggestions != [])}
+              aria-controls="compound-suggestions"
+              class="w-full rounded-lg border border-stroke bg-white p-3 pr-10 text-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary dark:border-strokedark dark:bg-boxdark"
+              placeholder="Enter a compound name"
+              autocomplete="off"
+            />
+          </form>
+          <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+            <.icon
+              name={if @loading, do: "hero-arrow-path", else: "hero-magnifying-glass"}
+              class={
+                if @loading,
+                  do: "size-5 text-body animate-spin motion-reduce:animate-none",
+                  else: "size-5 text-body"
+              }
+            />
+          </span>
 
-    IO.inspect(new_theme)
+          <ul
+            :if={@show_dropdown and @suggestions != []}
+            id="compound-suggestions"
+            role="listbox"
+            aria-label="Compound suggestions"
+            class="absolute z-10 mt-1 max-h-72 w-full overflow-y-auto rounded-lg border border-stroke bg-white shadow-lg dark:border-strokedark dark:bg-boxdark"
+          >
+            <li
+              :for={{compound, i} <- Enum.with_index(@suggestions)}
+              id={"suggestion-#{i}"}
+              role="option"
+              phx-click="select_compound"
+              phx-value-name={compound}
+              class="cursor-pointer px-4 py-2 hover:bg-gray-2 aria-selected:bg-primary/10 dark:hover:bg-white/5"
+            >
+              {compound}
+            </li>
+          </ul>
+        </div>
+      </div>
 
-    {:noreply,
-     socket
-     |> assign(:theme, new_theme)
-     |> push_event("theme:set", %{theme: new_theme})}
+      <div role="status" aria-live="polite">
+        <p :if={@loading} class="text-sm text-body dark:text-bodydark">Searching PubChem…</p>
+        <p :if={@error} class="mt-2 font-medium text-red-600 dark:text-red-400" role="alert">
+          {@error}
+        </p>
+      </div>
+
+      <p
+        :if={is_nil(@compound_data) and is_nil(@error) and not @loading}
+        class="rounded-lg border border-dashed border-stroke p-6 text-sm text-body dark:border-strokedark dark:text-bodydark"
+      >
+        Search PubChem by compound name (for example “caffeine”). Pick a suggestion or press Enter to look it up.
+      </p>
+
+      <div :if={@compound_data} class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <section
+          class="space-y-4 rounded-lg bg-white p-6 shadow-md dark:bg-[#181818] md:col-span-1"
+          aria-labelledby="structure-heading"
+        >
+          <h3 id="structure-heading" class="text-lg font-semibold text-black dark:text-white">
+            Structure
+          </h3>
+          <.structure_viewer
+            :if={@smiles}
+            id="research-viewer"
+            canvas_id="smiles-canvas-research"
+            smiles={@smiles}
+            size={260}
+            export={false}
+            label={"structure of " <> @compound_name}
+          />
+          <p :if={is_nil(@smiles)} class="text-sm text-body dark:text-bodydark">
+            PubChem did not return a SMILES string for this compound, so no structure can be drawn.
+          </p>
+
+          <div :if={@smiles} class="space-y-1">
+            <p class="text-sm font-medium text-black dark:text-white">SMILES</p>
+            <p class="break-all font-mono text-xs text-black dark:text-white">{@smiles}</p>
+          </div>
+
+          <div class="flex flex-wrap gap-2 text-sm">
+            <button
+              :if={@smiles}
+              id="copy-research-smiles"
+              type="button"
+              phx-hook="CopyButton"
+              data-copy={@smiles}
+              class="rounded border border-stroke px-2 py-1 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-white/5"
+            >
+              Copy SMILES
+            </button>
+            <button
+              :if={@compound_data["InChIKey"]}
+              id="copy-research-inchikey"
+              type="button"
+              phx-hook="CopyButton"
+              data-copy={@compound_data["InChIKey"]}
+              class="rounded border border-stroke px-2 py-1 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-white/5"
+            >
+              Copy InChIKey
+            </button>
+            <.link
+              :if={@smiles}
+              navigate={~p"/model?#{%{smiles: @smiles}}"}
+              class="rounded border border-primary px-2 py-1 text-accent dark:text-accent-light hover:bg-primary/10"
+            >
+              Use as starting molecule
+            </.link>
+            <a
+              :if={@record_url}
+              href={@record_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded border border-stroke px-2 py-1 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-white/5"
+            >
+              PubChem record ↗
+            </a>
+          </div>
+        </section>
+
+        <section
+          class="rounded-lg bg-white p-6 shadow-md dark:bg-[#181818] md:col-span-2"
+          aria-labelledby="properties-heading"
+        >
+          <h3 id="properties-heading" class="mb-4 text-lg font-semibold text-black dark:text-white">
+            Properties
+          </h3>
+          <dl class="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
+            <div :for={{key, label, unit} <- @properties}>
+              <dt class="text-sm font-medium text-black dark:text-white">{label}</dt>
+              <dd class="break-words text-sm text-body dark:text-bodydark">
+                <%= case @compound_data[key] do %>
+                  <% nil -> %>
+                    <span class="italic">Not available</span>
+                  <% value -> %>
+                    {value}{if unit, do: " " <> unit}
+                <% end %>
+              </dd>
+            </div>
+          </dl>
+          <p class="mt-5 text-xs text-body dark:text-bodydark">
+            Source: PubChem (NCBI). Descriptors such as XLogP, TPSA and complexity are values computed by PubChem, not experimental measurements.
+          </p>
+        </section>
+      </div>
+    </div>
+    """
   end
 
-  def handle_event("theme:init", %{"theme" => theme}, socket) do
-    # You can update assign or store the theme as needed.
-    {:noreply, assign(socket, :theme, theme)}
-  end
+  ## Events
 
   @impl true
   def handle_event("update_compound", %{"compound_name" => name}, socket) do
-    IO.inspect(name)
-    suggestions = fetch_suggestions(name)
-    IO.inspect(suggestions, label: "Suggestions")
-    {:noreply, assign(socket, compound_name: name, suggestions: suggestions, show_dropdown: true)}
-  end
+    seq = socket.assigns.seq + 1
+    socket = assign(socket, compound_name: name, seq: seq, show_dropdown: true)
 
-  def handle_event("select_compound", %{"name" => name}, socket) do
-    IO.inspect(name, label: "Selected Compound")
-    search(socket, name)
-
-    # {:noreply, assign(socket, compound_name: name, suggestions: [], show_dropdown: false)}
-  end
-
-  def handle_event("show_dropdown", _, socket) do
-    {:noreply, assign(socket, show_dropdown: true)}
-  end
-
-  def handle_event("hide_dropdown", _, socket) do
-    {:noreply, assign(socket, show_dropdown: false)}
-  end
-
-  # defp fetch_suggestions(query) when byte_size(query) < 2, do: []
-
-  defp fetch_suggestions(query) do
-    # Use Finch to fetch suggestions from PubChem
-    # The endpoint is: https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound,gene,taxonomy/{query}
-    # You can use the Finch library to make the HTTP request.
-    # Make sure to add Finch as a dependency in your mix.exs file.
-    # {:ok, response} = Finch.request(:get, url, headers: headers)
-    IO.inspect(query, label: "Query for suggestions")
-
-    url =
-      "https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound,gene,taxonomy/#{URI.encode(query)}"
-
-    headers = [
-      {"NCBI-PHID", "95B7506F824A39291747389517618SID.06"},
-      {"User-Agent", "Mozilla/5.0"},
-      {"Referer", "https://pubchem.ncbi.nlm.nih.gov"},
-      {"Accept", "application/json"}
-    ]
-
-    case Finch.build(:get, url, headers) |> Finch.request(PhxMolbind.Finch) do
-      {:ok, %Finch.Response{status: 200, body: body}} ->
-        IO.inspect(JSON.decode(body), label: "Response Body")
-
-        case Jason.decode(body) do
-          {:ok, %{"dictionary_terms" => %{"compound" => compounds}}} ->
-            Enum.take(compounds, 10)
-
-          _ ->
-            []
-        end
-
-      _ ->
-        []
+    if String.length(String.trim(name)) < 2 do
+      {:noreply, assign(socket, :suggestions, [])}
+    else
+      {:noreply, start_async(socket, {:suggest, seq}, fn -> CompoundSearch.suggest(name) end)}
     end
+  end
+
+  def handle_event("search_submit", %{"compound_name" => name}, socket),
+    do: {:noreply, search(socket, name)}
+
+  def handle_event("select_compound", %{"name" => name}, socket),
+    do: {:noreply, search(socket, name)}
+
+  def handle_event("show_dropdown", _params, socket),
+    do: {:noreply, assign(socket, :show_dropdown, true)}
+
+  def handle_event("hide_dropdown", _params, socket),
+    do: {:noreply, assign(socket, :show_dropdown, false)}
+
+  ## Async results (stale responses are dropped by sequence number)
+
+  @impl true
+  def handle_async({:suggest, seq}, {:ok, suggestions}, %{assigns: %{seq: seq}} = socket),
+    do: {:noreply, assign(socket, :suggestions, suggestions)}
+
+  def handle_async({:lookup, seq}, {:ok, {:ok, data}}, %{assigns: %{seq: seq}} = socket) do
+    {:noreply,
+     socket
+     |> assign(:loading, false)
+     |> assign(:error, nil)
+     |> assign_compound(data)}
+  end
+
+  def handle_async({:lookup, seq}, {:ok, {:error, message}}, %{assigns: %{seq: seq}} = socket) do
+    {:noreply,
+     socket
+     |> assign(:loading, false)
+     |> assign(:error, message)
+     |> assign_compound(nil)}
+  end
+
+  def handle_async({:lookup, seq}, {:exit, _reason}, %{assigns: %{seq: seq}} = socket) do
+    {:noreply,
+     socket
+     |> assign(:loading, false)
+     |> assign(:error, "The search failed unexpectedly. Please retry.")}
+  end
+
+  # Anything else is a response for a request that has since been superseded.
+  def handle_async(_name, _result, socket), do: {:noreply, socket}
+
+  ## Helpers
+
+  defp search(socket, name) do
+    name = String.trim(name)
+    seq = socket.assigns.seq + 1
+
+    if name == "" do
+      assign(socket, error: "Enter a compound name to search.", compound_name: "", seq: seq)
+    else
+      socket
+      |> assign(
+        compound_name: name,
+        suggestions: [],
+        show_dropdown: false,
+        loading: true,
+        error: nil,
+        seq: seq
+      )
+      |> start_async({:lookup, seq}, fn -> CompoundSearch.lookup(name) end)
+    end
+  end
+
+  defp assign_compound(socket, nil) do
+    socket |> assign(:compound_data, nil) |> assign(:smiles, nil) |> assign(:record_url, nil)
+  end
+
+  defp assign_compound(socket, data) do
+    socket
+    |> assign(:compound_data, data)
+    |> assign(:smiles, CompoundSearch.smiles(data))
+    |> assign(:record_url, CompoundSearch.record_url(data))
   end
 end

@@ -20,7 +20,18 @@ if System.get_env("PHX_SERVER") do
   config :phx_molbind, PhxMolbindWeb.Endpoint, server: true
 end
 
+# NVIDIA BioNeMo MolMIM API key (PhxMolbind.Molecules.Molecules).
+# Never hardcode this — set it in the environment, e.g.:
+#   export NVIDIA_API_KEY=nvapi-...
+# config :phx_molbind, :nvidia_api_key, System.get_env("NVIDIA_API_KEY")
+config :phx_molbind, :nvidia_api_key, "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"
+
+
 if config_env() == :prod do
+  if avatar_dir = System.get_env("AVATAR_DIR") do
+    config :phx_molbind, :avatar_dir, avatar_dir
+  end
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

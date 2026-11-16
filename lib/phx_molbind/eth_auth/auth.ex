@@ -1,92 +1,124 @@
-
 defmodule PhxMolbind.EthAuth.Auth do
-  alias PhxMolbind.EthSign.EthSignature
-  @nonce_table :nonce_store
+  @moduledoc """
+  Wallet sign-in: nonce issuance + signature verification.
 
-  @spec start_link(any()) :: {:ok, %{}}
-  def start_link(_opts) do
-    :ets.new(@nonce_table, [:named_table, :public, :set])
+  Flow:
+
+    1. Client asks for a nonce for their address (`generate_and_store_nonce/1`).
+    2. Client signs a message containing that nonce via MetaMask's
+       `personal_sign`.
+    3. Server verifies the signature recovers to the claimed address
+       (`verify_signature/2`) and, on success, mints a short-lived one-time
+       login ticket (`create_login_ticket/1`). A plain HTTP redirect
+       exchanges the ticket for a real session — LiveView sockets can't
+       write to the Plug session directly, so this hand-off happens through
+       `PhxMolbindWeb.EthSessionController`.
+
+  Nonces and tickets live in ETS tables owned by this GenServer, so their
+  lifetime is tied to the supervision tree (previously `start_link/1` was
+  invoked as a bare function call from `Application.start/2`, outside the
+  supervisor's children list, which is not how OTP processes are meant to be
+  started).
+  """
+  use GenServer
+
+  alias PhxMolbind.EthSign.EthSignature
+
+  @nonce_table :eth_auth_nonce_store
+  @ticket_table :eth_auth_login_ticket_store
+
+  # How long a client has to sign the nonce and send it back.
+  @nonce_ttl_seconds 300
+  # How long the LiveView -> controller hand-off redirect has to complete.
+  @ticket_ttl_seconds 60
+
+  def start_link(opts), do: GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+
+  @impl true
+  def init(_opts) do
+    :ets.new(@nonce_table, [:named_table, :public, :set, read_concurrency: true])
+    :ets.new(@ticket_table, [:named_table, :public, :set, read_concurrency: true])
     {:ok, %{}}
   end
 
+  @doc """
+  Issues a fresh, single-use nonce for `address`, stores it with an expiry,
+  and returns the exact message the client must sign with `personal_sign`.
+  Verification hashes this same message format — see `message_for_nonce/1`
+  — so the signed text and the verified text can never drift apart.
+  """
   def generate_and_store_nonce(address) do
-    IO.inspect(address, label: "generate_and_store_nonce")
     nonce = :crypto.strong_rand_bytes(16) |> Base.encode16(case: :lower)
-    :ets.insert(@nonce_table, {String.downcase(address), nonce})
-    nonce
+    :ets.insert(@nonce_table, {normalize(address), nonce, expires_at(@nonce_ttl_seconds)})
+    message_for_nonce(nonce)
   end
 
-  def delete_nonce(address) do
-    :ets.delete(@nonce_table, String.downcase(address))
-  end
-
-  def get_nonce(address) do
-    case :ets.lookup(@nonce_table, String.downcase(address)) do
-      [{^address, nonce}] -> {:ok, nonce}
-      _ -> :error
-    end
-  end
-
+  @doc """
+  Verifies that `signature_hex` is a valid `personal_sign` signature, by
+  `address`, over the nonce previously issued for that address. The nonce is
+  consumed (deleted) on success so it cannot be replayed.
+  """
   def verify_signature(address, signature_hex) do
-    with {:ok, nonce} <- get_nonce(address),
+    key = normalize(address)
+
+    with {:ok, nonce} <- fetch_valid_nonce(key),
          {:ok, sig_bin} <- decode_signature(signature_hex),
-         {:ok, msg_hash} <- hash_message(nonce),
-         {:ok, recovered_address} <- recover_address(sig_bin, msg_hash),
-         true <- String.downcase(recovered_address) == String.downcase(address) do
-      {:ok, %{address: recovered_address}}
+         {:ok, msg_hash} <- EthSignature.hash_message(message_for_nonce(nonce)),
+         {:ok, recovered} <- EthSignature.recover_address(sig_bin, msg_hash),
+         true <- normalize(recovered) == key do
+      :ets.delete(@nonce_table, key)
+      {:ok, %{address: recovered}}
     else
+      # Distinct message so the UI can tell the user to restart sign-in
+      # instead of blaming their signature. Still an {:error, _} tuple.
+      {:error, :nonce_expired} -> {:error, "Sign-in request expired"}
       _ -> {:error, "Invalid signature"}
     end
   end
 
-  defp decode_signature("0x" <> hex) do
-    {:ok, Base.decode16(hex, case: :mixed)}
+  @doc "Mints a one-time ticket that exchanges for a real session."
+  def create_login_ticket(user_id) do
+    ticket = :crypto.strong_rand_bytes(32) |> Base.url_encode64(padding: false)
+    :ets.insert(@ticket_table, {ticket, user_id, expires_at(@ticket_ttl_seconds)})
+    ticket
   end
 
-  # Sign a message on Metamask (or elsewhere)
-  # 65 bytes signature
-
-  defp hash_message(message) do
-    {:ok, hash} = EthSignature.hash_message(message)
-    {:ok, hash}
-  end
-
-  defp recover_address(signature, hash) do
-    case EthSignature.recover_address(signature, hash) do
-      {:ok, address} -> {:ok, address}
-      {:error, reason} -> {:error, reason}
+  @doc "Consumes (single-use) a login ticket, returning the associated user id."
+  def consume_login_ticket(ticket) do
+    case :ets.take(@ticket_table, ticket) do
+      [{^ticket, user_id, expiry}] -> if fresh?(expiry), do: {:ok, user_id}, else: :error
+      [] -> :error
     end
   end
 
-  # # Hash the message in Ethereum's special way
-  # defp hash_message(message) do
-  #   prefix = "\x19Ethereum Signed Message:\n" <> Integer.to_string(byte_size(message))
-  #   full_msg = prefix <> message
-  #   hash = Keccakf1600.hash_256(full_msg)  # Pure Elixir Keccak256
-  #   {:ok, hash}
-  # end
+  defp fetch_valid_nonce(key) do
+    case :ets.lookup(@nonce_table, key) do
+      [{^key, nonce, expiry}] ->
+        if fresh?(expiry), do: {:ok, nonce}, else: {:error, :nonce_expired}
 
-  # # Recover address from signature
-  # defp recover_address(signature, hash) do
-  #   <<r::binary-size(32), s::binary-size(32), v>> = signature
+      [] ->
+        {:error, :nonce_expired}
+    end
+  end
 
-  #   v = case v do
-  #     27 -> 0
-  #     28 -> 1
-  #     v when v in 0..1 -> v
-  #   end
+  defp decode_signature("0x" <> hex), do: Base.decode16(hex, case: :mixed)
+  defp decode_signature(_), do: :error
 
-  #   case Secp256k1Elixir.recover_public_key(hash, <<r::binary, s::binary>>, v, :uncompressed) do
-  #     {:ok, <<4, pubkey::binary-size(64)>>} ->
-  #       <<x::binary-size(32), y::binary-size(32)>> = pubkey
-  #       pubkey_no_prefix = <<x::binary, y::binary>>
+  defp normalize(address) when is_binary(address), do: String.downcase(address)
 
-  #       pubkey_hash = Keccakf1600.hash_256(pubkey_no_prefix)
-  #       <<_::binary-size(12), addr::binary-size(20)>> = pubkey_hash
-  #       {:ok, "0x" <> Base.encode16(addr, case: :lower)}
+  defp expires_at(ttl_seconds), do: System.system_time(:second) + ttl_seconds
+  defp fresh?(expiry), do: System.system_time(:second) <= expiry
 
-  #     _ ->
-  #       {:error, :invalid_signature}
-  #   end
-  # end
+  # Single source of truth for the exact text a wallet signs, so the
+  # message shown to the user and the message verified server-side can
+  # never drift apart.
+  defp message_for_nonce(nonce) do
+    """
+    Sign this message to log in to Phoenix Molecule Research.
+
+    This request will not trigger a blockchain transaction or cost any gas.
+
+    Nonce: #{nonce}
+    """
+  end
 end

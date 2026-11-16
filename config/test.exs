@@ -38,3 +38,6 @@ config :phoenix, :plug_init_mode, :runtime
 # Enable helpful, but potentially expensive runtime checks
 config :phoenix_live_view,
   enable_expensive_runtime_checks: true
+
+# Never write test uploads into the project tree.
+config :phx_molbind, :avatar_dir, Path.join(System.tmp_dir!(), "molbind_test_avatars")

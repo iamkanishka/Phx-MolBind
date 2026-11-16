@@ -89,6 +89,7 @@ defmodule PhxMolbindWeb do
       import Phoenix.HTML
       # Core UI components
       import PhxMolbindWeb.CoreComponents
+      import PhxMolbindWeb.ViewerComponents
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
